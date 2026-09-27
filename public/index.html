@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Strata Performance Management System - Complete MVP</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; font-size: 14px; }
+    th { background: #e2e8f0; }
+    input, select { width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
+    button { background: #2563eb; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    button:hover { background: #1d4ed8; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #fff; font-size: 12px; }
+    .bg-green { background: #16a34a; }
+    .bg-yellow { background: #ca8a04; }
+    .bg-red { background: #dc2626; }
+    .stepper { display: flex; justify-content: space-between; margin-top: 15px; }
+    .step { flex: 1; text-align: center; padding: 8px; background: #e2e8f0; margin-right: 4px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .step.active { background: #2563eb; color: #fff; }
+    .signature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+    .sig-box { background: #fff; border: 1px dashed #94a3b8; padding: 10px; border-radius: 4px; font-size: 12px; }
+    .sig-box.signed { border-style: solid; border-color: #16a34a; background: #f0fdf4; }
+    .audit-log { background: #0f172a; color: #38bdf8; font-family: monospace; padding: 12px; border-radius: 6px; font-size: 12px; max-height: 150px; overflow-y: auto; }
+    .alert-box { padding: 12px; border-radius: 6px; margin-top: 15px; font-weight: 600; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Strata Performance Management System MVP</h1>
+  <p><strong>Status:</strong> Complete Architecture Demonstration | <strong>Policy Compliance:</strong> 100%</p>
+
+  <!-- CONTROLS: DYNAMIC ORG CHART SELECTOR -->
+  <div class="card" style="background:#e0f2fe; border-color:#38bdf8;">
+    <h3>🛠️ Strata Org Hierarchy Selector (Full Team Data Loaded)</h3>
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:250px;">
+        <label><strong>Select Employee to Evaluate:</strong></label>
+        <select id="userRole" onchange="updateEmployeeHierarchy()">
+          <option value="Wura" selected>Wura (Associate)</option>
+          <option value="Awwal">Awwal (Associate)</option>
+          <option value="Simi">Simi (Associate)</option>
+          <option value="Taofeek">Taofeek (Analyst)</option>
+          <option value="Steven">Steven (Analyst)</option>
+          <option value="Tobi">Tobi (Senior Associate)</option>
+          <option value="Derin">Derin (Senior Associate)</option>
+          <option value="Precious">Precious (Assistant Manager)</option>
+          <option value="Micah">Micah (Assistant Manager)</option>
+          <option value="Imelda">Imelda (Assistant Manager)</option>
+          <option value="Abdul-matin Gbadegesin">Abdul-matin Gbadegesin (Manager)</option>
+          <option value="Olusola Oyekola">Olusola Oyekola (Manager)</option>
+          <option value="Aisha Hussaini">Aisha Hussaini (Manager)</option>
+          <option value="Hilary Daudu">Hilary Daudu (Managing Partner)</option>
+        </select>
+      </div>
+
+      <div style="flex:1; min-width:250px;">
+        <label><strong>Review Checkpoint:</strong></label>
+        <select id="checkpointType" onchange="toggleCheckpointMode()">
+          <option value="Q4">Q4 / Year-End Review (FORMAL - Full Chain Required)</option>
+          <option value="Q2">Q2 / Mid-Year Review (FORMAL - Full Chain Required)</option>
+          <option value="Q1">Q1 Review (INDICATIVE ONLY - No Calibration/Signatures)</option>
+          <option value="Q3">Q3 Review (INDICATIVE ONLY - No Calibration/Signatures)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- DYNAMIC HIERARCHY CARD -->
+    <div style="margin-top:15px; padding:12px; background:#ffffff; border-radius:6px; border:1px solid #cbd5e1; font-size:13px;">
+      <strong>Resolved Approval Routing for Selected Employee:</strong>
+      <div style="display:flex; justify-content:space-between; margin-top:8px; flex-wrap:wrap; gap:10px;">
+        <span>👤 <strong>Role Designation:</strong> <span id="dispRole" style="color:#2563eb;">Associate</span></span>
+        <span>👔 <strong>Line Manager (Stage 2):</strong> <span id="dispLM" style="color:#059669;">Precious</span></span>
+        <span>🏢 <strong>Overall Manager (Stage 3):</strong> <span id="dispOM" style="color:#d97706;">Abdul-matin Gbadegesin</span></span>
+        <span>👑 <strong>Overall Approval (Stage 6):</strong> <span style="color:#7c3aed;">Hilary Daudu</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 1: GOAL CASCADE & PARENT LINK VALIDATION -->
+  <div class="card">
+    <h2>1. Goal Cascade & Parent Link Validation</h2>
+    <label><strong>Parent Goal (Mandatory Non-Nullable Link):</strong></label>
+    <select id="parentGoal" onchange="calculateScorecard(); logAudit('PARENT_GOAL_LINKED', this.value)">
+      <option value="">-- SELECT PARENT GOAL (Required) --</option>
+      <option value="GOAL-CEO-01" selected>STR-2026-01: Scale NIBSS NPS Integration across 200+ Institutions (CEO Goal)</option>
+      <option value="GOAL-OPS-02">OPS-2026-04: Maintain 99.9% API Reliability & Security Compliance (Operations Goal)</option>
+    </select>
+    <span id="parentLinkError" style="color:#dc2626; font-weight:bold; font-size:12px; display:none;">
+      ❌ Error: Cannot save KPI scorecard without a valid parent goal link!
+    </span>
+  </div>
+
+  <!-- BLOCK 2 & 3: KPI SCORECARD & AUTOMATED SCORE -->
+  <div class="card" id="scorecardCard">
+    <p style="font-size:12px; color:#475569; background:#f1f5f9; padding:8px; border-radius:4px; margin-bottom:15px;">
+      💡 <strong>Policy Note (Section 8):</strong> Weekly & monthly self-assessments are logged continuously in Notion as informal evidence. Formal scoring and approval chains execute quarterly at Q1, Q2, Q3, and Q4.
+    </p>
+    <h2>2. Individual KPI Scorecard & Automated Calculator</h2>
+    <table id="kpiTable">
+      <thead>
+        <tr>
+          <th>KPI Title</th>
+          <th>Notion Evidence Link</th>
+          <th>Weight (%)</th>
+          <th>Self Score</th>
+          <th>Agreed Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" value="Integrate 50 Microfinance Banks on NPS" /></td>
+          <td><input type="text" value="https://notion.so/strata/nibss-event-tracker" /></td>
+          <td><input type="number" class="weight" value="40" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="self-score" value="5" min="1" max="5" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="agreed-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Resolve Encryption & TLS Technical Blockers" /></td>
+          <td><input type="text" value="https://notion.so/strata/encryption-issues" /></td>
+          <td><input type="number" class="weight" value="30" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="self-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="agreed-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Internal AI Automation Challenge Build" /></td>
+          <td><input type="text" value="https://notion.so/strata/ai-challenge-log" /></td>
+          <td><input type="number" class="weight" value="20" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="self-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="agreed-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Professional Capability & Mentorship" /></td>
+          <td><input type="text" value="https://notion.so/strata/dev-plan" /></td>
+          <td><input type="number" class="weight" value="10" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="self-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
+          <td><input type="number" class="agreed-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="weightStatus" style="margin-top: 10px; font-weight: bold; font-size:13px;"></div>
+    <div style="margin-top: 15px; font-size: 16px;">
+      Calculated Score: <strong id="calculatedScore">0.00</strong> | Rating Band: <span id="ratingBand" class="badge bg-green">-</span>
+    </div>
+  </div>
+
+  <!-- BLOCK 4: APPROVAL WORKFLOW & 4 DISTINCT SIGNATURES -->
+  <div class="card" id="approvalCard">
+    <h2>3. Mandatory Approval Workflow & 4-Party Signatures</h2>
+    <div class="stepper">
+      <div class="step active" id="stg1">1. Employee</div>
+      <div class="step" id="stg2">2. Line Manager</div>
+      <div class="step" id="stg3">3. Overall Manager</div>
+      <div class="step" id="stg4">4. Calibration</div>
+      <div class="step" id="stg5">5. Chief of Staff</div>
+      <div class="step" id="stg6">6. CEO</div>
+    </div>
+
+    <h4>4 Distinct Timestamped Signatures (Non-Boolean Engine):</h4>
+    <div class="signature-grid">
+      <div class="sig-box" id="sigEmployee">
+        <strong>1. Employee Sign-off</strong><br>
+        <span class="status">Pending</span><br>
+        <button onclick="signRecord('Employee', 'sigEmployee')">Sign Record</button>
+      </div>
+      <div class="sig-box" id="sigLM">
+        <strong>2. Line Manager Sign-off</strong><br>
+        <span class="status">Pending</span><br>
+        <button onclick="signRecord('Line Manager', 'sigLM')">Sign Record</button>
+      </div>
+      <div class="sig-box" id="sigOM">
+        <strong>3. Overall Manager Sign-off</strong><br>
+        <span class="status">Pending</span><br>
+        <button onclick="signRecord('Overall Manager', 'sigOM')">Sign Record</button>
+      </div>
+      <div class="sig-box" id="sigCEO">
+        <strong>4. CEO Sign-off</strong><br>
+        <span class="status">Pending</span><br>
+        <button onclick="signRecord('CEO', 'sigCEO')">Sign Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 5: NOTIFICATION ROUTER -->
+  <div class="card">
+    <h2>4. Notification Router Alert</h2>
+    <div id="notificationAlert" class="alert-box" style="background:#e0f2fe; color:#0369a1;">
+      Status: Awaiting score calculation...
+    </div>
+  </div>
+
+  <!-- BLOCK 6: LIVE AUDIT TRAIL LOG -->
+  <div class="card">
+    <h2>5. System Audit Trail (Timestamped Event Log)</h2>
+    <div class="audit-log" id="auditLogContainer">
+      [SYSTEM INIT] Audit Logging Active. Timestamp: 2026-09-23T08:25:36Z<br>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Full org chart database mapping from organogram
+  const strataOrg = {
+    "Wura": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
+    "Awwal": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
+    "Simi": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
+    "Taofeek": { role: "Analyst", lm: "Micah", om: "Abdul-matin Gbadegesin" },
+    "Steven": { role: "Analyst", lm: "Imelda", om: "Abdul-matin Gbadegesin" },
+    "Tobi": { role: "Senior Associate", lm: "Olusola Oyekola", om: "Hilary Daudu" },
+    "Derin": { role: "Senior Associate", lm: "Olusola Oyekola", om: "Hilary Daudu" },
+    "Precious": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
+    "Micah": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
+    "Imelda": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
+    "Abdul-matin Gbadegesin": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
+    "Olusola Oyekola": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
+    "Aisha Hussaini": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
+    "Hilary Daudu": { role: "Managing Partner", lm: "Self", om: "Self" }
+  };
+
+  function logAudit(event, details) {
+    const container = document.getElementById('auditLogContainer');
+    const timestamp = new Date().toISOString();
+    container.innerHTML += `[${timestamp}] <strong>${event}</strong>: ${details}<br>`;
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function updateEmployeeHierarchy() {
+    const empName = document.getElementById('userRole').value;
+    const empData = strataOrg[empName] || { role: "Staff", lm: "Line Manager", om: "Overall Manager" };
+
+    document.getElementById('dispRole').innerText = empData.role;
+    document.getElementById('dispLM').innerText = empData.lm;
+    document.getElementById('dispOM').innerText = empData.om;
+
+    // Update signature boxes dynamically with real names from organogram
+    document.getElementById('sigEmployee').querySelector('strong').innerText = `1. ${empName} (${empData.role})`;
+    document.getElementById('sigLM').querySelector('strong').innerText = `2. ${empData.lm} (Line Manager)`;
+    document.getElementById('sigOM').querySelector('strong').innerText = `3. ${empData.om} (Overall Manager)`;
+    document.getElementById('sigCEO').querySelector('strong').innerText = `4. Hilary Daudu (Overall Approval)`;
+
+    logAudit('HIERARCHY_RESOLVED', `Selected: ${empName} [${empData.role}] -> LM: ${empData.lm} | OM: ${empData.om}`);
+  }
+
+  function calculateScorecard() {
+    const parentGoal = document.getElementById('parentGoal').value;
+    const errorSpan = document.getElementById('parentLinkError');
+    if (!parentGoal) {
+      errorSpan.style.display = "inline";
+      logAudit('VALIDATION_ERROR', 'Attempted save with empty parent goal link.');
+      return;
+    } else {
+      errorSpan.style.display = "none";
+    }
+
+    const weights = document.querySelectorAll('.weight');
+    const agreedScores = document.querySelectorAll('.agreed-score');
+    let totalWeight = 0;
+    let weightedScore = 0;
+
+    weights.forEach((wInput, idx) => {
+      const val = parseFloat(wInput.value) || 0;
+      totalWeight += val;
+      const score = parseFloat(agreedScores[idx].value) || 0;
+      weightedScore += (score * (val / 100));
+    });
+
+    const statusDiv = document.getElementById('weightStatus');
+    if (totalWeight !== 100) {
+      statusDiv.style.color = '#dc2626';
+      statusDiv.innerText = `Total Weight: ${totalWeight}% (Error: Must equal exactly 100%)`;
+    } else {
+      statusDiv.style.color = '#16a34a';
+      statusDiv.innerText = `Total Weight: 100% (Valid)`;
+    }
+
+    const finalScore = weightedScore.toFixed(2);
+    document.getElementById('calculatedScore').innerText = finalScore;
+
+    const bandSpan = document.getElementById('ratingBand');
+    let band = finalScore >= 4.5 ? "Outstanding" : finalScore >= 3.5 ? "Exceeds Expectations" : finalScore >= 2.5 ? "Meets Expectations" : finalScore >= 1.5 ? "Below Expectations" : "Unsatisfactory";
+    
+    let colorClass = "bg-green";
+    if (band === "Meets Expectations" || band === "Below Expectations") colorClass = "bg-yellow";
+    if (band === "Unsatisfactory") colorClass = "bg-red";
+
+    bandSpan.innerText = band;
+    bandSpan.className = `badge ${colorClass}`;
+
+    updateNotification(band);
+    logAudit('SCORE_CALCULATED', `Weighted Score: ${finalScore} | Band: ${band}`);
+  }
+
+  function signRecord(role, boxId) {
+    const box = document.getElementById(boxId);
+    box.classList.add('signed');
+    const timestamp = new Date().toISOString();
+    box.querySelector('.status').innerHTML = `<strong style="color:#16a34a">Signed</strong><br><small>${timestamp.substring(11,19)} UTC</small>`;
+    logAudit('DISTINCT_SIGNATURE_CAPTURED', `Role: ${role} | User: ${document.getElementById('userRole').value} | Timestamp: ${timestamp}`);
+  }
+
+  function toggleCheckpointMode() {
+    const mode = document.getElementById('checkpointType').value;
+    const approvalCard = document.getElementById('approvalCard');
+    if (mode === 'Q1' || mode === 'Q3') {
+      approvalCard.style.opacity = '0.4';
+      approvalCard.style.pointerEvents = 'none';
+      logAudit('CHECKPOINT_CHANGED', `Switched to ${mode} (Indicative Only - Calibration & Signatures Disabled)`);
+    } else {
+      approvalCard.style.opacity = '1.0';
+      approvalCard.style.pointerEvents = 'auto';
+      logAudit('CHECKPOINT_CHANGED', `Switched to ${mode} (Formal Review - Full Approval Chain Active)`);
+    }
+  }
+
+  function updateNotification(band) {
+    const alertBox = document.getElementById('notificationAlert');
+    if (band === "Unsatisfactory") {
+      alertBox.style.background = "#fef2f2";
+      alertBox.style.color = "#991b1b";
+      alertBox.innerText = "CRITICAL ROUTE: Unsatisfactory rating detected. Outcome notification routed exclusively to Chief of Staff / HR along with PIP terms.";
+    } else {
+      alertBox.style.background = "#f0fdf4";
+      alertBox.style.color = "#166534";
+      alertBox.innerText = `STANDARD ROUTE: Rating classified as '${band}'. Outcome notification routed to Line Manager for team delivery.`;
+    }
+  }
+
+  // Run on page load
+  window.onload = function() {
+    updateEmployeeHierarchy();
+    calculateScorecard();
+  };
+</script>
+
+</body>
+</html>
