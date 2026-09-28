@@ -4,6 +4,20 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+if (process.env.NODE_ENV === 'production') {
+  console.error(
+    '❌ seed.js is disabled in production because it performs a destructive TRUNCATE.'
+  );
+  process.exit(1);
+}
+
+if (process.env.ALLOW_DESTRUCTIVE_SEED !== 'true') {
+  console.error(
+    '❌ Destructive seed blocked. Set ALLOW_DESTRUCTIVE_SEED=true to run seed.js.'
+  );
+  process.exit(1);
+}
+
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL is missing from .env');
   process.exit(1);

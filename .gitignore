@@ -1,2 +1,5 @@
 node_modules/
 .env
+.env
+.env.*
+!.env.examplepublic/rules_config.json
