@@ -11,7 +11,8 @@ An enterprise-grade, configuration-driven Performance Management System built fo
 │                        CLIENT LAYER (Browser)                          │
 │                                                                        │
 │   • public/index.html (Interactive Dashboard & Verification UI)        │
-│   • public/rules_config.json (Single Source of Truth Config)           │
+│   • public/rules_config.json(Single Source of Truth -Ignored)          |
+│   • public/rules_config.json.example (Sample Configuration Template)   │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ HTTPS / REST API / JWT Tokens
                                     ▼

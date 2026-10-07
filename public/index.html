@@ -2,338 +2,624 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Strata Performance Management System - Complete MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strata Performance Management System</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
-    .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; font-size: 14px; }
-    th { background: #e2e8f0; }
-    input, select { width: 95%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
-    button { background: #2563eb; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; }
-    button:hover { background: #1d4ed8; }
-    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #fff; font-size: 12px; }
-    .bg-green { background: #16a34a; }
-    .bg-yellow { background: #ca8a04; }
-    .bg-red { background: #dc2626; }
-    .stepper { display: flex; justify-content: space-between; margin-top: 15px; }
-    .step { flex: 1; text-align: center; padding: 8px; background: #e2e8f0; margin-right: 4px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .step.active { background: #2563eb; color: #fff; }
-    .signature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-    .sig-box { background: #fff; border: 1px dashed #94a3b8; padding: 10px; border-radius: 4px; font-size: 12px; }
-    .sig-box.signed { border-style: solid; border-color: #16a34a; background: #f0fdf4; }
-    .audit-log { background: #0f172a; color: #38bdf8; font-family: monospace; padding: 12px; border-radius: 6px; font-size: 12px; max-height: 150px; overflow-y: auto; }
-    .alert-box { padding: 12px; border-radius: 6px; margin-top: 15px; font-weight: 600; font-size: 13px; }
+    :root {
+      --bg-dark: #0b1329;
+      --bg-card: #152238;
+      --bg-light: #f8fafc;
+      --border-color: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warning-bg: #fef9c3;
+      --warning-text: #854d0e;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+    body { background-color: #f1f5f9; color: var(--text-dark); min-height: 100vh; }
+
+    /* MANAGEMENT SIMULATION RIBBON */
+    .role-ribbon { background: #020617; color: #94a3b8; padding: 6px 24px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e293b; }
+    .role-ribbon select { background: #0f172a; color: #f8fafc; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+
+    /* HEADER BAR */
+    .header { background: var(--bg-dark); color: #fff; padding: 20px 24px 0 24px; }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { background: #fff; color: #000; font-weight: 900; padding: 6px 12px; border-radius: 4px; font-size: 16px; letter-spacing: -0.5px; }
+    .welcome-text { font-size: 22px; font-weight: 700; }
+    .date-text { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+    .user-info-grid { display: flex; gap: 20px; font-size: 12px; color: #cbd5e1; background: var(--bg-card); padding: 10px 16px; border-radius: 6px; border: 1px solid #334155; flex-wrap: wrap; }
+    .user-info-item span { color: #94a3b8; display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .user-info-item strong { color: #f8fafc; font-size: 13px; }
+
+    .header-right { text-align: right; }
+    .pms-title { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
+    .pms-tag { background: #16a34a; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 6px; display: inline-block; }
+    .quarter-select { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+
+    /* NAVIGATION TABS */
+    .nav-tabs { display: flex; gap: 4px; border-bottom: 1px solid #334155; margin-top: 15px; }
+    .tab-btn { background: transparent; color: #94a3b8; border: none; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 6px; }
+    .tab-btn.active { color: #fff; border-bottom-color: var(--primary); background: rgba(255,255,255,0.05); border-radius: 4px 4px 0 0; }
+    .badge-count { background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 800; }
+
+    /* MAIN LAYOUT */
+    .container { max-width: 1400px; margin: 20px auto; padding: 0 24px; }
+    .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+
+    .card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); }
+    
+    /* SCORE JOURNEY TIMELINE BANNER */
+    .journey-banner { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .journey-step { text-align: center; position: relative; flex: 1; }
+    .journey-step small { color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; }
+    .journey-step strong { font-size: 18px; color: #0f172a; }
+    .journey-step span { font-size: 11px; color: #64748b; display: block; margin-top: 2px; }
+    .journey-divider { width: 1px; height: 35px; background: #cbd5e1; }
+
+    /* GOAL ALIGNMENT SIDEBAR */
+    .goal-group { margin-bottom: 16px; font-size: 12px; }
+    .goal-group-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .goal-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; color: #334155; line-height: 1.4; font-size: 12px; }
+
+    .category-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; color: #475569; }
+    .category-row strong { color: #0f172a; }
+
+    /* EVALUATION TABLE */
+    .proof-of-work-box { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 12px; }
+    .proof-of-work-box input { width: 340px; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; }
+
+    table.eval-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px; }
+    table.eval-table th { background: #f1f5f9; text-align: left; padding: 10px; font-size: 11px; text-transform: uppercase; color: #475569; border-bottom: 2px solid var(--border-color); }
+    table.eval-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+    .cat-header-td { background: #f8fafc; font-weight: 700; color: #1e293b; font-size: 13px; }
+    
+    input.score-input { width: 50px; padding: 6px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; font-weight: 600; }
+    
+    /* SUMMARY BAR */
+    .summary-bar { background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; flex-wrap: wrap; gap: 10px; }
+    .score-badge { display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: 700; font-size: 12px; background: #22c55e; color: #fff; }
+
+    .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; border: none; transition: 0.2s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #e2e8f0; color: #334155; }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-success { background: #16a34a; color: #fff; }
+
+    /* AUDIT TRAIL TIMELINE */
+    .audit-thread { border-left: 2px solid #2563eb; padding-left: 15px; margin-top: 15px; }
+    .audit-item { margin-bottom: 12px; font-size: 12px; }
+    .audit-item strong { color: #0f172a; }
+    .audit-item small { color: #64748b; margin-left: 6px; }
+
+    /* METRICS DASHBOARD */
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .metric-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
+    .metric-card small { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+    .metric-card .value { font-size: 24px; font-weight: 800; color: var(--text-dark); margin-top: 4px; }
+
+    /* MODAL OVERLAYS */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: #fff; width: 90%; max-width: 900px; border-radius: 8px; padding: 24px; max-height: 85vh; overflow-y: auto; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Strata Performance Management System MVP</h1>
-  <p><strong>Status:</strong> Complete Architecture Demonstration | <strong>Policy Compliance:</strong> 100%</p>
+  <!-- MANAGEMENT SIMULATION RIBBON -->
+  <div class="role-ribbon">
+    <span>🔒 Strata PMS Phase 3 Interoperable Platform</span>
+    <div>
+      <label>Active Persona: </label>
+      <select id="roleSelector" onchange="switchViewMode()">
+        <option value="Employee">1. Employee View (Oluwatobi)</option>
+        <option value="LineManager">2. Line Manager View (Precious)</option>
+        <option value="OverallManager">3. Overall Manager View (Abdul-matin)</option>
+        <option value="Calibration">4. Calibration Committee View (Olusola)</option>
+        <option value="ChiefOfStaff">5. Chief of Staff View (Aisha)</option>
+        <option value="CEO">6. CEO View (Hilary Daudu)</option>
+      </select>
+    </div>
+  </div>
 
-  <!-- CONTROLS: DYNAMIC ORG CHART SELECTOR -->
-  <div class="card" style="background:#e0f2fe; border-color:#38bdf8;">
-    <h3>🛠️ Strata Org Hierarchy Selector (Full Team Data Loaded)</h3>
-    <div style="display:flex; gap:20px; flex-wrap:wrap;">
-      <div style="flex:1; min-width:250px;">
-        <label><strong>Select Employee to Evaluate:</strong></label>
-        <select id="userRole" onchange="updateEmployeeHierarchy()">
-          <option value="Wura" selected>Wura (Associate)</option>
-          <option value="Awwal">Awwal (Associate)</option>
-          <option value="Simi">Simi (Associate)</option>
-          <option value="Taofeek">Taofeek (Analyst)</option>
-          <option value="Steven">Steven (Analyst)</option>
-          <option value="Tobi">Tobi (Senior Associate)</option>
-          <option value="Derin">Derin (Senior Associate)</option>
-          <option value="Precious">Precious (Assistant Manager)</option>
-          <option value="Micah">Micah (Assistant Manager)</option>
-          <option value="Imelda">Imelda (Assistant Manager)</option>
-          <option value="Abdul-matin Gbadegesin">Abdul-matin Gbadegesin (Manager)</option>
-          <option value="Olusola Oyekola">Olusola Oyekola (Manager)</option>
-          <option value="Aisha Hussaini">Aisha Hussaini (Manager)</option>
-          <option value="Hilary Daudu">Hilary Daudu (Managing Partner)</option>
+  <!-- HEADER BAR -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo-container">
+        <div class="logo-mark">Strata</div>
+        <div>
+          <div class="welcome-text" id="welcomeName">Welcome, Oluwatobi</div>
+          <div class="date-text">3 October 2026</div>
+        </div>
+      </div>
+
+      <div class="user-info-grid">
+        <div class="user-info-item"><span>Job Title</span><strong id="dispJobTitle">Product Manager</strong></div>
+        <div class="user-info-item"><span>Email</span><strong id="dispEmail">tobi@strata.ng</strong></div>
+        <div class="user-info-item"><span>Line Manager</span><strong id="dispLM">Precious</strong></div>
+        <div class="user-info-item"><span>Practice Area</span><strong id="dispPractice">Product</strong></div>
+      </div>
+
+      <div class="header-right">
+        <div class="pms-title">Performance Management System <span class="pms-tag" id="roleBadge">Employee</span></div>
+        <select class="quarter-select" id="quarterSelect" onchange="handleQuarterChange()">
+          <option value="Q2">Q2: Mid-year review</option>
+          <option value="Q4">Q4: Year-end review</option>
+          <option value="Q1">Q1: Indicative</option>
+          <option value="Q3">Q3: Indicative</option>
         </select>
       </div>
-
-      <div style="flex:1; min-width:250px;">
-        <label><strong>Review Checkpoint:</strong></label>
-        <select id="checkpointType" onchange="toggleCheckpointMode()">
-          <option value="Q4">Q4 / Year-End Review (FORMAL - Full Chain Required)</option>
-          <option value="Q2">Q2 / Mid-Year Review (FORMAL - Full Chain Required)</option>
-          <option value="Q1">Q1 Review (INDICATIVE ONLY - No Calibration/Signatures)</option>
-          <option value="Q3">Q3 Review (INDICATIVE ONLY - No Calibration/Signatures)</option>
-        </select>
-      </div>
     </div>
 
-    <!-- DYNAMIC HIERARCHY CARD -->
-    <div style="margin-top:15px; padding:12px; background:#ffffff; border-radius:6px; border:1px solid #cbd5e1; font-size:13px;">
-      <strong>Resolved Approval Routing for Selected Employee:</strong>
-      <div style="display:flex; justify-content:space-between; margin-top:8px; flex-wrap:wrap; gap:10px;">
-        <span>👤 <strong>Role Designation:</strong> <span id="dispRole" style="color:#2563eb;">Associate</span></span>
-        <span>👔 <strong>Line Manager (Stage 2):</strong> <span id="dispLM" style="color:#059669;">Precious</span></span>
-        <span>🏢 <strong>Overall Manager (Stage 3):</strong> <span id="dispOM" style="color:#d97706;">Abdul-matin Gbadegesin</span></span>
-        <span>👑 <strong>Overall Approval (Stage 6):</strong> <span style="color:#7c3aed;">Hilary Daudu</span></span>
-      </div>
+    <!-- NAVIGATION TABS -->
+    <div class="nav-tabs" id="navTabs">
+      <button class="tab-btn active" id="tabScorecard" onclick="switchTab('scorecard')">My scorecard</button>
+      <button class="tab-btn" id="tabDirectReports" style="display:none;" onclick="switchTab('directReports')">Direct reports <span class="badge-count">3</span></button>
+      <button class="tab-btn" id="tabDashboard" style="display:none;" onclick="switchTab('dashboard')">Dashboard <span class="badge-count" id="dashBadgeCount">10 to review</span></button>
+      <button class="tab-btn" id="tabPeople" style="display:none;" onclick="switchTab('people')">People Management</button>
+      <button class="tab-btn" id="tabGoals" style="display:none;" onclick="switchTab('companyGoals')">Company goals</button>
     </div>
   </div>
 
-  <!-- BLOCK 1: GOAL CASCADE & PARENT LINK VALIDATION -->
-  <div class="card">
-    <h2>1. Goal Cascade & Parent Link Validation</h2>
-    <label><strong>Parent Goal (Mandatory Non-Nullable Link):</strong></label>
-    <select id="parentGoal" onchange="calculateScorecard(); logAudit('PARENT_GOAL_LINKED', this.value)">
-      <option value="">-- SELECT PARENT GOAL (Required) --</option>
-      <option value="GOAL-CEO-01" selected>STR-2026-01: Scale NIBSS NPS Integration across 200+ Institutions (CEO Goal)</option>
-      <option value="GOAL-OPS-02">OPS-2026-04: Maintain 99.9% API Reliability & Security Compliance (Operations Goal)</option>
-    </select>
-    <span id="parentLinkError" style="color:#dc2626; font-weight:bold; font-size:12px; display:none;">
-      ❌ Error: Cannot save KPI scorecard without a valid parent goal link!
-    </span>
-  </div>
-
-  <!-- BLOCK 2 & 3: KPI SCORECARD & AUTOMATED SCORE -->
-  <div class="card" id="scorecardCard">
-    <p style="font-size:12px; color:#475569; background:#f1f5f9; padding:8px; border-radius:4px; margin-bottom:15px;">
-      💡 <strong>Policy Note (Section 8):</strong> Weekly & monthly self-assessments are logged continuously in Notion as informal evidence. Formal scoring and approval chains execute quarterly at Q1, Q2, Q3, and Q4.
-    </p>
-    <h2>2. Individual KPI Scorecard & Automated Calculator</h2>
-    <table id="kpiTable">
-      <thead>
-        <tr>
-          <th>KPI Title</th>
-          <th>Notion Evidence Link</th>
-          <th>Weight (%)</th>
-          <th>Self Score</th>
-          <th>Agreed Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" value="Integrate 50 Microfinance Banks on NPS" /></td>
-          <td><input type="text" value="https://notion.so/strata/nibss-event-tracker" /></td>
-          <td><input type="number" class="weight" value="40" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="self-score" value="5" min="1" max="5" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="agreed-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
-        </tr>
-        <tr>
-          <td><input type="text" value="Resolve Encryption & TLS Technical Blockers" /></td>
-          <td><input type="text" value="https://notion.so/strata/encryption-issues" /></td>
-          <td><input type="number" class="weight" value="30" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="self-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="agreed-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
-        </tr>
-        <tr>
-          <td><input type="text" value="Internal AI Automation Challenge Build" /></td>
-          <td><input type="text" value="https://notion.so/strata/ai-challenge-log" /></td>
-          <td><input type="number" class="weight" value="20" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="self-score" value="4" min="1" max="5" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="agreed-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
-        </tr>
-        <tr>
-          <td><input type="text" value="Professional Capability & Mentorship" /></td>
-          <td><input type="text" value="https://notion.so/strata/dev-plan" /></td>
-          <td><input type="number" class="weight" value="10" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="self-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
-          <td><input type="number" class="agreed-score" value="3" min="1" max="5" oninput="calculateScorecard()" /></td>
-        </tr>
-      </tbody>
-    </table>
-    <div id="weightStatus" style="margin-top: 10px; font-weight: bold; font-size:13px;"></div>
-    <div style="margin-top: 15px; font-size: 16px;">
-      Calculated Score: <strong id="calculatedScore">0.00</strong> | Rating Band: <span id="ratingBand" class="badge bg-green">-</span>
-    </div>
-  </div>
-
-  <!-- BLOCK 4: APPROVAL WORKFLOW & 4 DISTINCT SIGNATURES -->
-  <div class="card" id="approvalCard">
-    <h2>3. Mandatory Approval Workflow & 4-Party Signatures</h2>
-    <div class="stepper">
-      <div class="step active" id="stg1">1. Employee</div>
-      <div class="step" id="stg2">2. Line Manager</div>
-      <div class="step" id="stg3">3. Overall Manager</div>
-      <div class="step" id="stg4">4. Calibration</div>
-      <div class="step" id="stg5">5. Chief of Staff</div>
-      <div class="step" id="stg6">6. CEO</div>
-    </div>
-
-    <h4>4 Distinct Timestamped Signatures (Non-Boolean Engine):</h4>
-    <div class="signature-grid">
-      <div class="sig-box" id="sigEmployee">
-        <strong>1. Employee Sign-off</strong><br>
-        <span class="status">Pending</span><br>
-        <button onclick="signRecord('Employee', 'sigEmployee')">Sign Record</button>
-      </div>
-      <div class="sig-box" id="sigLM">
-        <strong>2. Line Manager Sign-off</strong><br>
-        <span class="status">Pending</span><br>
-        <button onclick="signRecord('Line Manager', 'sigLM')">Sign Record</button>
-      </div>
-      <div class="sig-box" id="sigOM">
-        <strong>3. Overall Manager Sign-off</strong><br>
-        <span class="status">Pending</span><br>
-        <button onclick="signRecord('Overall Manager', 'sigOM')">Sign Record</button>
-      </div>
-      <div class="sig-box" id="sigCEO">
-        <strong>4. CEO Sign-off</strong><br>
-        <span class="status">Pending</span><br>
-        <button onclick="signRecord('CEO', 'sigCEO')">Sign Record</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BLOCK 5: NOTIFICATION ROUTER -->
-  <div class="card">
-    <h2>4. Notification Router Alert</h2>
-    <div id="notificationAlert" class="alert-box" style="background:#e0f2fe; color:#0369a1;">
-      Status: Awaiting score calculation...
-    </div>
-  </div>
-
-  <!-- BLOCK 6: LIVE AUDIT TRAIL LOG -->
-  <div class="card">
-    <h2>5. System Audit Trail (Timestamped Event Log)</h2>
-    <div class="audit-log" id="auditLogContainer">
-      [SYSTEM INIT] Audit Logging Active. Timestamp: 2026-09-23T08:25:36Z<br>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Full org chart database mapping from organogram
-  const strataOrg = {
-    "Wura": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
-    "Awwal": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
-    "Simi": { role: "Associate", lm: "Precious", om: "Abdul-matin Gbadegesin" },
-    "Taofeek": { role: "Analyst", lm: "Micah", om: "Abdul-matin Gbadegesin" },
-    "Steven": { role: "Analyst", lm: "Imelda", om: "Abdul-matin Gbadegesin" },
-    "Tobi": { role: "Senior Associate", lm: "Olusola Oyekola", om: "Hilary Daudu" },
-    "Derin": { role: "Senior Associate", lm: "Olusola Oyekola", om: "Hilary Daudu" },
-    "Precious": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
-    "Micah": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
-    "Imelda": { role: "Assistant Manager", lm: "Abdul-matin Gbadegesin", om: "Hilary Daudu" },
-    "Abdul-matin Gbadegesin": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
-    "Olusola Oyekola": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
-    "Aisha Hussaini": { role: "Manager", lm: "Hilary Daudu", om: "Hilary Daudu" },
-    "Hilary Daudu": { role: "Managing Partner", lm: "Self", om: "Self" }
-  };
-
-  function logAudit(event, details) {
-    const container = document.getElementById('auditLogContainer');
-    const timestamp = new Date().toISOString();
-    container.innerHTML += `[${timestamp}] <strong>${event}</strong>: ${details}<br>`;
-    container.scrollTop = container.scrollHeight;
-  }
-
-  function updateEmployeeHierarchy() {
-    const empName = document.getElementById('userRole').value;
-    const empData = strataOrg[empName] || { role: "Staff", lm: "Line Manager", om: "Overall Manager" };
-
-    document.getElementById('dispRole').innerText = empData.role;
-    document.getElementById('dispLM').innerText = empData.lm;
-    document.getElementById('dispOM').innerText = empData.om;
-
-    // Update signature boxes dynamically with real names from organogram
-    document.getElementById('sigEmployee').querySelector('strong').innerText = `1. ${empName} (${empData.role})`;
-    document.getElementById('sigLM').querySelector('strong').innerText = `2. ${empData.lm} (Line Manager)`;
-    document.getElementById('sigOM').querySelector('strong').innerText = `3. ${empData.om} (Overall Manager)`;
-    document.getElementById('sigCEO').querySelector('strong').innerText = `4. Hilary Daudu (Overall Approval)`;
-
-    logAudit('HIERARCHY_RESOLVED', `Selected: ${empName} [${empData.role}] -> LM: ${empData.lm} | OM: ${empData.om}`);
-  }
-
-  function calculateScorecard() {
-    const parentGoal = document.getElementById('parentGoal').value;
-    const errorSpan = document.getElementById('parentLinkError');
-    if (!parentGoal) {
-      errorSpan.style.display = "inline";
-      logAudit('VALIDATION_ERROR', 'Attempted save with empty parent goal link.');
-      return;
-    } else {
-      errorSpan.style.display = "none";
-    }
-
-    const weights = document.querySelectorAll('.weight');
-    const agreedScores = document.querySelectorAll('.agreed-score');
-    let totalWeight = 0;
-    let weightedScore = 0;
-
-    weights.forEach((wInput, idx) => {
-      const val = parseFloat(wInput.value) || 0;
-      totalWeight += val;
-      const score = parseFloat(agreedScores[idx].value) || 0;
-      weightedScore += (score * (val / 100));
-    });
-
-    const statusDiv = document.getElementById('weightStatus');
-    if (totalWeight !== 100) {
-      statusDiv.style.color = '#dc2626';
-      statusDiv.innerText = `Total Weight: ${totalWeight}% (Error: Must equal exactly 100%)`;
-    } else {
-      statusDiv.style.color = '#16a34a';
-      statusDiv.innerText = `Total Weight: 100% (Valid)`;
-    }
-
-    const finalScore = weightedScore.toFixed(2);
-    document.getElementById('calculatedScore').innerText = finalScore;
-
-    const bandSpan = document.getElementById('ratingBand');
-    let band = finalScore >= 4.5 ? "Outstanding" : finalScore >= 3.5 ? "Exceeds Expectations" : finalScore >= 2.5 ? "Meets Expectations" : finalScore >= 1.5 ? "Below Expectations" : "Unsatisfactory";
+  <!-- MAIN CONTAINER -->
+  <div class="container">
     
-    let colorClass = "bg-green";
-    if (band === "Meets Expectations" || band === "Below Expectations") colorClass = "bg-yellow";
-    if (band === "Unsatisfactory") colorClass = "bg-red";
+    <!-- EVALUATION VIEW (EMPLOYEE, LINE MANAGER, OM DETAIL) -->
+    <div id="viewEvaluation">
+      
+      <!-- SCORE JOURNEY TIMELINE BANNER -->
+      <div class="journey-banner" id="journeyBanner">
+        <div class="journey-step"><small>Self Score</small><strong>4.00</strong><span>Submitted 25 Sep</span></div>
+        <div class="journey-divider"></div>
+        <div class="journey-step"><small>Line Manager</small><strong>3.70</strong><span>Precious • 30 Sep</span></div>
+        <div class="journey-divider"></div>
+        <div class="journey-step"><small>Calibration</small><strong>3.70</strong><span>No change • 1 Oct</span></div>
+        <div class="journey-divider"></div>
+        <div class="journey-step"><small>Overall Manager</small><strong>3.70</strong><span>Approved • 2 Oct</span></div>
+        <div class="journey-divider"></div>
+        <div class="journey-step"><small>Chief of Staff</small><strong style="color:#d97706;">Pending</strong><span>In Review</span></div>
+      </div>
 
-    bandSpan.innerText = band;
-    bandSpan.className = `badge ${colorClass}`;
+      <!-- DIRECT REPORTS DROPDOWN BAR (LM / OM Views) -->
+      <div id="directReportsBar" class="card" style="display:none; background:#e0f2fe; border-color:#38bdf8;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <label style="font-size:12px; font-weight:700;">Select Direct Report: </label>
+            <select id="directReportSelect" onchange="loadDirectReportData()" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; font-size:12px;">
+              <option value="Tobi">Oluwatobi Omotayo (Product Manager)</option>
+              <option value="Amaka">Amaka Eze (Business Analyst)</option>
+              <option value="Chidi">Chidi Okafor (UX Designer)</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:12px; font-size:12px;">
+            <span>🟡 <strong>1</strong> Awaiting your score</span>
+            <span>⚪ <strong>1</strong> Not submitted</span>
+            <span>🟢 <strong>1</strong> Scored</span>
+          </div>
+        </div>
+      </div>
 
-    updateNotification(band);
-    logAudit('SCORE_CALCULATED', `Weighted Score: ${finalScore} | Band: ${band}`);
-  }
+      <div class="grid-layout">
+        <!-- LEFT SIDEBAR: GOAL ALIGNMENT -->
+        <div>
+          <div class="card">
+            <div class="section-title">
+              Goal alignment <small style="color:#64748b; font-size:11px;">FY26</small>
+            </div>
 
-  function signRecord(role, boxId) {
-    const box = document.getElementById(boxId);
-    box.classList.add('signed');
-    const timestamp = new Date().toISOString();
-    box.querySelector('.status').innerHTML = `<strong style="color:#16a34a">Signed</strong><br><small>${timestamp.substring(11,19)} UTC</small>`;
-    logAudit('DISTINCT_SIGNATURE_CAPTURED', `Role: ${role} | User: ${document.getElementById('userRole').value} | Timestamp: ${timestamp}`);
-  }
+            <div class="goal-group">
+              <div class="goal-group-title">🟦 Company Goals</div>
+              <div class="goal-item">1. Grow Strata revenue 40% in FY26</div>
+              <div class="goal-item">2. Scale NIBSS NPS Integration across 200+ Institutions</div>
+            </div>
 
-  function toggleCheckpointMode() {
-    const mode = document.getElementById('checkpointType').value;
-    const approvalCard = document.getElementById('approvalCard');
-    if (mode === 'Q1' || mode === 'Q3') {
-      approvalCard.style.opacity = '0.4';
-      approvalCard.style.pointerEvents = 'none';
-      logAudit('CHECKPOINT_CHANGED', `Switched to ${mode} (Indicative Only - Calibration & Signatures Disabled)`);
-    } else {
-      approvalCard.style.opacity = '1.0';
-      approvalCard.style.pointerEvents = 'auto';
-      logAudit('CHECKPOINT_CHANGED', `Switched to ${mode} (Formal Review - Full Approval Chain Active)`);
+            <div class="goal-group">
+              <div class="goal-group-title">🟩 Practice Goals</div>
+              <div class="goal-item">1. Product & AI: 95% on-time delivery across client engagements</div>
+            </div>
+
+            <div class="goal-group">
+              <div class="goal-group-title">🔷 Team Goal</div>
+              <div class="goal-item">1. AI Transformation: every engagement ships live use cases with proven value</div>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #e2e8f0; margin:15px 0;">
+
+            <div class="goal-group-title">MY KPI CATEGORIES</div>
+            <div class="category-row"><span>Core role delivery</span> <strong>50%</strong></div>
+            <div class="category-row"><span>Strategic / cross-functional</span> <strong>20%</strong></div>
+            <div class="category-row"><span>People, culture & values</span> <strong>15%</strong></div>
+            <div class="category-row"><span>Capability & development</span> <strong>15%</strong></div>
+            <div class="category-row" style="color:#16a34a; font-weight:bold; margin-top:6px;"><span>Total weight</span> <span>100% (valid)</span></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: EVALUATION MATRIX -->
+        <div>
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+              <h2 style="font-size:18px;" id="evalMatrixTitle">Performance Evaluation</h2>
+              <div class="proof-of-work-box">
+                <label>Proof of work (Notion link):</label>
+                <input type="text" id="notionLinkInput" value="https://www.notion.so/strata/tobi-g1-proof-of-work" />
+              </div>
+            </div>
+
+            <!-- NESTED EVALUATION TABLE -->
+            <table class="eval-table">
+              <thead>
+                <tr>
+                  <th style="width:30px;">S/N</th>
+                  <th>KPI Category</th>
+                  <th style="width:60px;">Weight</th>
+                  <th>KPI Title</th>
+                  <th style="width:110px;">Weight in Cat.</th>
+                  <th style="width:65px;">Self Score</th>
+                  <th style="width:65px;">Manager Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="cat-header-td">1</td>
+                  <td class="cat-header-td">Core role delivery</td>
+                  <td class="cat-header-td">50%</td>
+                  <td>Milestone delivery</td>
+                  <td>40%</td>
+                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
+                </tr>
+                <tr>
+                  <td></td><td></td><td></td>
+                  <td style="color:#d97706; font-weight:600;">Scope change control (Edited)</td>
+                  <td>30%</td>
+                  <td><input type="number" class="score-input" value="5" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
+                </tr>
+                <tr>
+                  <td></td><td></td><td></td>
+                  <td>Outcome achievement</td>
+                  <td>30%</td>
+                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
+                </tr>
+                <tr>
+                  <td class="cat-header-td">2</td>
+                  <td class="cat-header-td">Strategic / cross-functional</td>
+                  <td class="cat-header-td">20%</td>
+                  <td>Client stakeholder satisfaction</td>
+                  <td>100%</td>
+                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
+                </tr>
+                <tr>
+                  <td class="cat-header-td">3</td>
+                  <td class="cat-header-td">People, culture & values</td>
+                  <td class="cat-header-td">15%</td>
+                  <td>Collaboration & values</td>
+                  <td>100%</td>
+                  <td><input type="number" class="score-input" value="3" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="3" min="1" max="5"></td>
+                </tr>
+                <tr>
+                  <td class="cat-header-td">4</td>
+                  <td class="cat-header-td">Capability & development</td>
+                  <td class="cat-header-td">15%</td>
+                  <td>Capability development</td>
+                  <td>100%</td>
+                  <td><input type="number" class="score-input" value="3" min="1" max="5"></td>
+                  <td><input type="number" class="score-input mgr-input" value="3" min="1" max="5"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- SUMMARY BAR -->
+            <div class="summary-bar">
+              <div>Total weight <strong>100% (valid)</strong></div>
+              <div>Calculated score <strong id="calcScoreDisplay" style="font-size:18px;">3.70 / 5</strong></div>
+              <div class="score-badge">Exceeds Expectation</div>
+              <div style="display:flex; gap:8px;" id="actionButtonsGroup">
+                <button class="btn btn-secondary" id="btnEditKPIs" onclick="openEditModal()">Edit KPIs</button>
+                <button class="btn btn-secondary">Save draft</button>
+                <button class="btn btn-primary" onclick="alert('Scorecard submitted successfully!')">Submit Scorecard</button>
+              </div>
+            </div>
+
+            <!-- AUDIT TRAIL THREAD -->
+            <div style="margin-top:25px;">
+              <h4 style="font-size:14px; margin-bottom:10px;">Audit trail & comments</h4>
+              <div class="audit-thread">
+                <div class="audit-item">
+                  <strong>Kurite Adesina</strong> <small>Overall Manager • 2 Oct</small><br>
+                  Approved the final score 3.70 (Exceeds Expectation).
+                </div>
+                <div class="audit-item">
+                  <strong>Iriti Coker</strong> <small>Calibration Committee • 1 Oct</small><br>
+                  Reviewed in calibration. No change to 3.70.
+                </div>
+                <div class="audit-item">
+                  <strong>Precious</strong> <small>Line Manager • 30 Sep</small><br>
+                  Edited manager score: Scope change control 5 ➔ 4. Reason: Delivery slipped one sprint.
+                </div>
+                <div class="audit-item">
+                  <strong>Oluwatobi Omotayo</strong> <small>Employee • 25 Sep</small><br>
+                  Submitted self score 4.00 with proof of work link.
+                </div>
+              </div>
+
+              <div style="margin-top:15px; display:flex; gap:10px;">
+                <input type="text" placeholder="Add a comment or audit reason..." style="flex:1; padding:8px 12px; border:1px solid var(--border-color); border-radius:4px; font-size:12px;">
+                <button class="btn btn-primary" onclick="alert('Comment added to audit trail.')">Post</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: EXECUTIVE MANAGEMENT DASHBOARD -->
+    <div id="viewDashboard" style="display:none;">
+      <div class="metrics-grid">
+        <div class="metric-card"><small>Approved by Overall Manager</small><div class="value">15</div></div>
+        <div class="metric-card"><small>Pending Review</small><div class="value" style="color:#d97706;">10</div></div>
+        <div class="metric-card"><small>Average Final Score</small><div class="value">3.67</div></div>
+        <div class="metric-card"><small>Rating Spread (15 Staff)</small><div style="font-size:12px; margin-top:8px;">🟢 Outstanding: 3 | 🔵 Exceeds: 8 | 🟡 Meets: 4</div></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3 id="dashTitle">Company Scorecard Moderation Overview</h3>
+          <div style="display:flex; gap:10px;">
+            <select style="padding:6px; font-size:12px;"><option>All practices</option></select>
+            <select style="padding:6px; font-size:12px;"><option>All statuses</option></select>
+            <input type="text" placeholder="Search by name..." style="padding:6px; font-size:12px; border:1px solid var(--border-color); border-radius:4px;">
+          </div>
+        </div>
+
+        <table class="eval-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Job Title</th>
+              <th>Practice Area</th>
+              <th>Self</th>
+              <th>Manager</th>
+              <th>Rating</th>
+              <th>Overall Mgr</th>
+              <th>Chief of Staff</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Oluwatobi Omotayo</strong></td>
+              <td>Product Manager</td>
+              <td>Product</td>
+              <td>4.00</td>
+              <td>3.70</td>
+              <td><span class="score-badge">Exceeds</span></td>
+              <td>Approved (2 Oct)</td>
+              <td>🟡 Pending</td>
+              <td><button class="btn btn-primary" style="padding:4px 8px;" onclick="switchTab('scorecard')">Review</button></td>
+            </tr>
+            <tr>
+              <td><strong>Amaka Eze</strong></td>
+              <td>Business Analyst</td>
+              <td>Analytics</td>
+              <td>3.80</td>
+              <td>3.40</td>
+              <td><span class="score-badge" style="background:#ca8a04;">Meets</span></td>
+              <td>Approved (1 Oct)</td>
+              <td>🟢 Approved</td>
+              <td><button class="btn btn-secondary" style="padding:4px 8px;">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>Chidi Okafor</strong></td>
+              <td>UX Designer</td>
+              <td>Design</td>
+              <td>4.30</td>
+              <td>3.90</td>
+              <td><span class="score-badge">Exceeds</span></td>
+              <td>Approved (2 Oct)</td>
+              <td>🟢 Approved</td>
+              <td><button class="btn btn-secondary" style="padding:4px 8px;">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 3: PEOPLE MANAGEMENT DIRECTORY -->
+    <div id="viewPeople" style="display:none;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3>People Management Directory</h3>
+          <button class="btn btn-primary">+ Add person</button>
+        </div>
+
+        <table class="eval-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Job Title</th>
+              <th>Practice Area</th>
+              <th>Role Designation</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Hilary Daudu</td><td>hilary.daudu@strata.ng</td><td>Managing Partner</td><td>Executive</td><td>Managing Partner</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
+            <tr><td>Aisha Hussaini</td><td>aisha.hussaini@strata.ng</td><td>Chief of Staff</td><td>Operations</td><td>Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
+            <tr><td>Abdul-matin Gbadegesin</td><td>abdulmatin.gbadegesin@strata.ng</td><td>Practice Director</td><td>Product</td><td>Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
+            <tr><td>Precious</td><td>precious@strata.ng</td><td>Assistant Manager</td><td>Product</td><td>Assistant Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
+            <tr><td>Oluwatobi Omotayo</td><td>tobi@strata.ng</td><td>Product Manager</td><td>Product</td><td>Senior Associate</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 4: COMPANY GOALS MANAGEMENT (CEO View) -->
+    <div id="viewGoals" style="display:none;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3>Company Strategic Goals — FY26</h3>
+          <button class="btn btn-success">+ Add company goal</button>
+        </div>
+        <div class="goal-item" style="padding:15px; margin-bottom:10px;">
+          <strong>1. Grow Strata revenue 40% in FY26</strong><br>
+          <small>Measure: Annual revenue target | Target: +40%</small>
+        </div>
+        <div class="goal-item" style="padding:15px;">
+          <strong>2. Scale NIBSS NPS Integration across 200+ Institutions</strong><br>
+          <small>Measure: Active MFB connections | Target: 200</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KPI EDIT MODAL OVERLAY -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+      <h3 style="margin-bottom:15px;">Editing KPIs for Oluwatobi Omotayo</h3>
+      <p style="font-size:12px; color:#64748b; margin-bottom:15px;">If you change a KPI weight or category, scores will reset. A reason for change is mandatory.</p>
+      
+      <table class="eval-table">
+        <thead>
+          <tr>
+            <th>KPI Category</th>
+            <th>Weight</th>
+            <th>KPI Title</th>
+            <th>Sub-Weight</th>
+            <th>Reason for Change (Required)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Core role delivery</td>
+            <td>50%</td>
+            <td><input type="text" value="Milestone delivery" style="width:100%; padding:4px;"></td>
+            <td>40%</td>
+            <td><input type="text" placeholder="Reason for change..." style="width:100%; padding:4px;"></td>
+          </tr>
+          <tr>
+            <td>Core role delivery</td>
+            <td>50%</td>
+            <td><input type="text" value="Scope change control" style="width:100%; padding:4px;"></td>
+            <td>30%</td>
+            <td><input type="text" value="Matches the Q2 delivery plan" style="width:100%; padding:4px;"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="closeEditModal(); alert('Updated KPIs sent to Oluwatobi!')">Send to Oluwatobi</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DYNAMIC PERSONA & VIEW SWITCHER ENGINE
+    function switchViewMode() {
+      const role = document.getElementById('roleSelector').value;
+      const tabDR = document.getElementById('tabDirectReports');
+      const tabDash = document.getElementById('tabDashboard');
+      const tabPeople = document.getElementById('tabPeople');
+      const tabGoals = document.getElementById('tabGoals');
+      const drBar = document.getElementById('directReportsBar');
+      const roleBadge = document.getElementById('roleBadge');
+
+      roleBadge.innerText = role;
+
+      if (role === 'Employee') {
+        document.getElementById('welcomeName').innerText = "Welcome, Oluwatobi";
+        document.getElementById('dispJobTitle').innerText = "Product Manager";
+        document.getElementById('dispEmail').innerText = "tobi@strata.ng";
+        document.getElementById('dispLM').innerText = "Precious";
+        tabDR.style.display = 'none'; tabDash.style.display = 'none'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
+        drBar.style.display = 'none';
+        switchTab('scorecard');
+      } else if (role === 'LineManager') {
+        document.getElementById('welcomeName').innerText = "Welcome, Precious";
+        document.getElementById('dispJobTitle').innerText = "Assistant Manager";
+        document.getElementById('dispEmail').innerText = "precious@strata.ng";
+        document.getElementById('dispLM').innerText = "Abdul-matin";
+        tabDR.style.display = 'flex'; tabDash.style.display = 'none'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
+        switchTab('directReports');
+      } else if (role === 'OverallManager') {
+        document.getElementById('welcomeName').innerText = "Welcome, Abdul-matin";
+        document.getElementById('dispJobTitle').innerText = "Practice Director";
+        document.getElementById('dispEmail').innerText = "abdulmatin.gbadegesin@strata.ng";
+        document.getElementById('dispLM').innerText = "Hilary Daudu";
+        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
+        document.getElementById('dashBadgeCount').innerText = "10 to review";
+        switchTab('dashboard');
+      } else if (role === 'Calibration') {
+        document.getElementById('welcomeName').innerText = "Welcome, Olusola";
+        document.getElementById('dispJobTitle').innerText = "Calibration Chair";
+        document.getElementById('dispEmail').innerText = "olusola.oyekola@strata.ng";
+        document.getElementById('dispLM').innerText = "Hilary Daudu";
+        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
+        document.getElementById('dashBadgeCount').innerText = "15 to calibrate";
+        switchTab('dashboard');
+      } else if (role === 'ChiefOfStaff') {
+        document.getElementById('welcomeName').innerText = "Welcome, Aisha";
+        document.getElementById('dispJobTitle').innerText = "Chief of Staff";
+        document.getElementById('dispEmail').innerText = "aisha.hussaini@strata.ng";
+        document.getElementById('dispLM').innerText = "Hilary Daudu";
+        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'flex'; tabGoals.style.display = 'none';
+        switchTab('dashboard');
+      } else if (role === 'CEO') {
+        document.getElementById('welcomeName').innerText = "Welcome, Hilary Daudu";
+        document.getElementById('dispJobTitle').innerText = "Managing Partner / CEO";
+        document.getElementById('dispEmail').innerText = "hilary.daudu@strata.ng";
+        document.getElementById('dispLM').innerText = "Self";
+        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'flex'; tabGoals.style.display = 'flex';
+        switchTab('companyGoals');
+      }
     }
-  }
 
-  function updateNotification(band) {
-    const alertBox = document.getElementById('notificationAlert');
-    if (band === "Unsatisfactory") {
-      alertBox.style.background = "#fef2f2";
-      alertBox.style.color = "#991b1b";
-      alertBox.innerText = "CRITICAL ROUTE: Unsatisfactory rating detected. Outcome notification routed exclusively to Chief of Staff / HR along with PIP terms.";
-    } else {
-      alertBox.style.background = "#f0fdf4";
-      alertBox.style.color = "#166534";
-      alertBox.innerText = `STANDARD ROUTE: Rating classified as '${band}'. Outcome notification routed to Line Manager for team delivery.`;
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('viewEvaluation').style.display = 'none';
+      document.getElementById('viewDashboard').style.display = 'none';
+      document.getElementById('viewPeople').style.display = 'none';
+      document.getElementById('viewGoals').style.display = 'none';
+      document.getElementById('directReportsBar').style.display = 'none';
+
+      if (tabName === 'scorecard') {
+        document.getElementById('tabScorecard').classList.add('active');
+        document.getElementById('viewEvaluation').style.display = 'block';
+      } else if (tabName === 'directReports') {
+        document.getElementById('tabDirectReports').classList.add('active');
+        document.getElementById('viewEvaluation').style.display = 'block';
+        document.getElementById('directReportsBar').style.display = 'block';
+      } else if (tabName === 'dashboard') {
+        document.getElementById('tabDashboard').classList.add('active');
+        document.getElementById('viewDashboard').style.display = 'block';
+      } else if (tabName === 'people') {
+        document.getElementById('tabPeople').classList.add('active');
+        document.getElementById('viewPeople').style.display = 'block';
+      } else if (tabName === 'companyGoals') {
+        document.getElementById('tabGoals').classList.add('active');
+        document.getElementById('viewGoals').style.display = 'block';
+      }
     }
-  }
 
-  // Run on page load
-  window.onload = function() {
-    updateEmployeeHierarchy();
-    calculateScorecard();
-  };
-</script>
-
+    function openEditModal() { document.getElementById('editModal').style.display = 'flex'; }
+    function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+  </script>
 </body>
 </html>

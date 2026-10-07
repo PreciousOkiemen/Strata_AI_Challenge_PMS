@@ -1,0 +1,61 @@
+{
+  "policy_version": "1.0-2026",
+  "effective_date": "2026-09-22",
+  "role_designations": [
+    "Intern",
+    "Analyst",
+    "Associate",
+    "Senior Associate",
+    "Assistant Manager",
+    "Manager",
+    "Partner",
+    "Managing Partner"
+  ],
+  "weighting_rules": {
+    "min_kpi_weight": 0.05,
+    "max_kpi_weight": 0.40,
+    "target_total_weight": 1.00,
+    "min_kpi_count": 4,
+    "max_kpi_count": 6
+  },
+  "rating_scale": {
+    "min_score": 1,
+    "max_score": 5
+  },
+  "rating_bands": [
+    { "band": "Outstanding", "min": 4.50, "max": 5.00 },
+    { "band": "Exceeds Expectations", "min": 3.50, "max": 4.49 },
+    { "band": "Meets Expectations", "min": 2.50, "max": 3.49 },
+    { "band": "Below Expectations", "min": 1.50, "max": 2.49 },
+    { "band": "Unsatisfactory", "min": 0.00, "max": 1.49 }
+  ],
+  "approval_stages": [
+    { "stage": 1, "name": "Employee", "action": "Submit Self-Assessment & Evidence" },
+    { "stage": 2, "name": "Line Manager", "action": "Independent Scoring & Reconciliation" },
+    { "stage": 3, "name": "Overall Manager", "action": "Review & Approval Across Direct Reports" },
+    { "stage": 4, "name": "Performance Calibration Committee", "action": "Cross-Team Moderation" },
+    { "stage": 5, "name": "Chief of Staff", "action": "Policy Compliance Review" },
+    { "stage": 6, "name": "CEO", "action": "Final Approval" }
+  ],
+  "required_sign_offs": ["Employee", "Line Manager", "Overall Manager", "CEO"],
+  "notification_routing": {
+    "unsatisfactory_recipient": "Chief of Staff / HR",
+    "standard_recipient": "Line Manager"
+  },
+ "org_hierarchy": [
+    { "id": "EMP-001", "name": "Hilary Daudu", "email": "hilary.daudu@strata.ng", "role": "Managing Partner", "line_manager": "Self", "overall_manager": "Self" },
+    { "id": "EMP-002", "name": "Abdul-matin Gbadegesin", "email": "abdulmatin.gbadegesin@strata.ng", "role": "Manager", "line_manager": "Hilary Daudu", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-003", "name": "Olusola Oyekola", "email": "olusola.oyekola@strata.ng", "role": "Manager", "line_manager": "Hilary Daudu", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-004", "name": "Aisha Hussaini", "email": "aisha.hussaini@strata.ng", "role": "Manager", "line_manager": "Hilary Daudu", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-005", "name": "Micah", "email": "micah@strata.ng", "role": "Assistant Manager", "line_manager": "Abdul-matin Gbadegesin", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-006", "name": "Imelda", "email": "imelda@strata.ng", "role": "Assistant Manager", "line_manager": "Abdul-matin Gbadegesin", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-007", "name": "Precious", "email": "precious@strata.ng", "role": "Assistant Manager", "line_manager": "Abdul-matin Gbadegesin", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-008", "name": "Tobi", "email": "tobi@strata.ng", "role": "Senior Associate", "line_manager": "Olusola Oyekola", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-009", "name": "Derin", "email": "derin@strata.ng", "role": "Senior Associate", "line_manager": "Olusola Oyekola", "overall_manager": "Hilary Daudu" },
+    { "id": "EMP-010", "name": "Taofeek", "email": "taofeek@strata.ng", "role": "Analyst", "line_manager": "Micah", "overall_manager": "Abdul-matin Gbadegesin" },
+    { "id": "EMP-011", "name": "Steven", "email": "steven@strata.ng", "role": "Analyst", "line_manager": "Imelda", "overall_manager": "Abdul-matin Gbadegesin" },
+    { "id": "EMP-012", "name": "Wura", "email": "wura@strata.ng", "role": "Associate", "line_manager": "Precious", "overall_manager": "Abdul-matin Gbadegesin" },
+    { "id": "EMP-013", "name": "Awwal", "email": "awwal@strata.ng", "role": "Associate", "line_manager": "Precious", "overall_manager": "Abdul-matin Gbadegesin" },
+    { "id": "EMP-014", "name": "Simi", "email": "simi@strata.ng", "role": "Associate", "line_manager": "Precious", "overall_manager": "Abdul-matin Gbadegesin" }
+  ]
+}
