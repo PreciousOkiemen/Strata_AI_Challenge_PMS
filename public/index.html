@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Strata Performance Management System</title>
+  <title>Strata Advisory — Performance Management System</title>
   <style>
     :root {
       --bg-dark: #0b1329;
       --bg-card: #152238;
-      --bg-light: #f8fafc;
       --border-color: #cbd5e1;
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
@@ -16,596 +15,425 @@
       --text-muted: #64748b;
       --success-bg: #dcfce7;
       --success-text: #166534;
-      --warning-bg: #fef9c3;
-      --warning-text: #854d0e;
-      --danger-bg: #fee2e2;
-      --danger-text: #991b1b;
+      --danger: #dc2626;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: #f1f5f9; color: var(--text-dark); min-height: 100vh; }
 
-    /* MANAGEMENT SIMULATION RIBBON */
-    .role-ribbon { background: #020617; color: #94a3b8; padding: 6px 24px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e293b; }
-    .role-ribbon select { background: #0f172a; color: #f8fafc; border: 1px solid #334155; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    /* LOGIN SCREEN STYLING */
+    .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #020617; padding: 20px; }
+    .login-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; width: 100%; max-width: 440px; padding: 36px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); color: #fff; }
+    .login-logo { background: #fff; color: #000; font-weight: 900; padding: 6px 14px; border-radius: 6px; font-size: 18px; display: inline-block; margin-bottom: 16px; }
+    .login-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .login-subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 24px; }
+    
+    .form-group { margin-bottom: 18px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; text-transform: uppercase; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .form-control { width: 100%; padding: 10px 14px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 13px; outline: none; }
+    .form-control:focus { border-color: var(--primary); }
+    
+    .btn-login { width: 100%; padding: 12px; background: var(--primary); color: #fff; font-weight: 700; font-size: 13px; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+    .btn-login:hover { background: var(--primary-hover); }
 
-    /* HEADER BAR */
+    .quick-login-box { margin-top: 24px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: left; }
+    .quick-login-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+    .persona-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+    .pill-btn:hover { background: #334155; color: #fff; }
+
+    /* MAIN SYSTEM HEADER */
     .header { background: var(--bg-dark); color: #fff; padding: 20px 24px 0 24px; }
     .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
     .logo-container { display: flex; align-items: center; gap: 12px; }
-    .logo-mark { background: #fff; color: #000; font-weight: 900; padding: 6px 12px; border-radius: 4px; font-size: 16px; letter-spacing: -0.5px; }
+    .logo-mark { background: #fff; color: #000; font-weight: 900; padding: 6px 12px; border-radius: 4px; font-size: 16px; }
     .welcome-text { font-size: 22px; font-weight: 700; }
     .date-text { font-size: 12px; color: #94a3b8; margin-top: 2px; }
 
-    .user-info-grid { display: flex; gap: 20px; font-size: 12px; color: #cbd5e1; background: var(--bg-card); padding: 10px 16px; border-radius: 6px; border: 1px solid #334155; flex-wrap: wrap; }
-    .user-info-item span { color: #94a3b8; display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .user-info-grid { display: flex; gap: 18px; font-size: 12px; color: #cbd5e1; background: var(--bg-card); padding: 10px 16px; border-radius: 6px; border: 1px solid #334155; }
+    .user-info-item span { color: #94a3b8; display: block; font-size: 10px; text-transform: uppercase; }
     .user-info-item strong { color: #f8fafc; font-size: 13px; }
 
     .header-right { text-align: right; }
-    .pms-title { font-size: 13px; color: #94a3b8; font-weight: 600; margin-bottom: 8px; }
-    .pms-tag { background: #16a34a; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 6px; display: inline-block; }
-    .quarter-select { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    .logout-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+    .logout-btn:hover { background: #dc2626; }
 
     /* NAVIGATION TABS */
     .nav-tabs { display: flex; gap: 4px; border-bottom: 1px solid #334155; margin-top: 15px; }
     .tab-btn { background: transparent; color: #94a3b8; border: none; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 6px; }
     .tab-btn.active { color: #fff; border-bottom-color: var(--primary); background: rgba(255,255,255,0.05); border-radius: 4px 4px 0 0; }
-    .badge-count { background: #38bdf8; color: #0f172a; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 800; }
 
-    /* MAIN LAYOUT */
+    /* MAIN CONTAINER & GRID */
     .container { max-width: 1400px; margin: 20px auto; padding: 0 24px; }
     .grid-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
-
     .card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text-dark); }
-    
-    /* SCORE JOURNEY TIMELINE BANNER */
-    .journey-banner { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .journey-step { text-align: center; position: relative; flex: 1; }
-    .journey-step small { color: #64748b; font-size: 10px; text-transform: uppercase; font-weight: 700; display: block; }
-    .journey-step strong { font-size: 18px; color: #0f172a; }
-    .journey-step span { font-size: 11px; color: #64748b; display: block; margin-top: 2px; }
-    .journey-divider { width: 1px; height: 35px; background: #cbd5e1; }
-
-    /* GOAL ALIGNMENT SIDEBAR */
-    .goal-group { margin-bottom: 16px; font-size: 12px; }
-    .goal-group-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    .goal-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; color: #334155; line-height: 1.4; font-size: 12px; }
-
-    .category-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; color: #475569; }
-    .category-row strong { color: #0f172a; }
+    .section-title { font-size: 15px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
 
     /* EVALUATION TABLE */
-    .proof-of-work-box { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 12px; }
-    .proof-of-work-box input { width: 340px; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; }
-
     table.eval-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px; }
     table.eval-table th { background: #f1f5f9; text-align: left; padding: 10px; font-size: 11px; text-transform: uppercase; color: #475569; border-bottom: 2px solid var(--border-color); }
     table.eval-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
     .cat-header-td { background: #f8fafc; font-weight: 700; color: #1e293b; font-size: 13px; }
-    
     input.score-input { width: 50px; padding: 6px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; font-weight: 600; }
-    
-    /* SUMMARY BAR */
-    .summary-bar { background: #f8fafc; border: 1px solid var(--border-color); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; flex-wrap: wrap; gap: 10px; }
-    .score-badge { display: inline-block; padding: 6px 12px; border-radius: 4px; font-weight: 700; font-size: 12px; background: #22c55e; color: #fff; }
 
-    .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; border: none; transition: 0.2s; }
+    .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; border: none; }
     .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-hover); }
     .btn-secondary { background: #e2e8f0; color: #334155; }
-    .btn-secondary:hover { background: #cbd5e1; }
-    .btn-success { background: #16a34a; color: #fff; }
 
-    /* AUDIT TRAIL TIMELINE */
-    .audit-thread { border-left: 2px solid #2563eb; padding-left: 15px; margin-top: 15px; }
-    .audit-item { margin-bottom: 12px; font-size: 12px; }
-    .audit-item strong { color: #0f172a; }
-    .audit-item small { color: #64748b; margin-left: 6px; }
-
-    /* METRICS DASHBOARD */
+    /* METRICS & AUDIT */
     .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
     .metric-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
     .metric-card small { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; }
     .metric-card .value { font-size: 24px; font-weight: 800; color: var(--text-dark); margin-top: 4px; }
-
-    /* MODAL OVERLAYS */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .modal-content { background: #fff; width: 90%; max-width: 900px; border-radius: 8px; padding: 24px; max-height: 85vh; overflow-y: auto; }
+    
+    .audit-thread { border-left: 2px solid #2563eb; padding-left: 15px; margin-top: 15px; }
+    .audit-item { margin-bottom: 12px; font-size: 12px; }
   </style>
 </head>
 <body>
 
-  <!-- MANAGEMENT SIMULATION RIBBON -->
-  <div class="role-ribbon">
-    <span>🔒 Strata PMS Phase 3 Interoperable Platform</span>
-    <div>
-      <label>Active Persona: </label>
-      <select id="roleSelector" onchange="switchViewMode()">
-        <option value="Employee">1. Employee View (Oluwatobi)</option>
-        <option value="LineManager">2. Line Manager View (Precious)</option>
-        <option value="OverallManager">3. Overall Manager View (Abdul-matin)</option>
-        <option value="Calibration">4. Calibration Committee View (Olusola)</option>
-        <option value="ChiefOfStaff">5. Chief of Staff View (Aisha)</option>
-        <option value="CEO">6. CEO View (Hilary Daudu)</option>
-      </select>
-    </div>
-  </div>
+  <!-- 1. AUTHENTICATION SCREEN (DEFAULT FOR UNAUTHENTICATED USERS) -->
+  <div id="authSection" class="login-container">
+    <div class="login-card">
+      <div class="login-logo">Strata</div>
+      <div class="login-title">Performance Portal</div>
+      <div class="login-subtitle">Strata Advisory Limited • Enterprise Sign-In</div>
 
-  <!-- HEADER BAR -->
-  <div class="header">
-    <div class="header-top">
-      <div class="logo-container">
-        <div class="logo-mark">Strata</div>
-        <div>
-          <div class="welcome-text" id="welcomeName">Welcome, Oluwatobi</div>
-          <div class="date-text">3 October 2026</div>
+      <div id="loginError" style="display:none; background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; font-size:12px; margin-bottom:15px; text-align:left;"></div>
+
+      <form onsubmit="executeLogin(event)">
+        <div class="form-group">
+          <label>Corporate Email</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="username@strata.ng" required value="wura@strata.ng">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-control" value="Password123!" required>
+        </div>
+        <button type="submit" class="btn-login" id="btnLoginSubmit">Sign In to Dashboard</button>
+      </form>
+
+      <!-- EXECUTIVE DEMO QUICK-FILL ASSISTANT -->
+      <div class="quick-login-box">
+        <div class="quick-login-title">Executive Presentation Quick-Select:</div>
+        <div class="persona-pills">
+          <button class="pill-btn" onclick="quickFill('wura@strata.ng')">Wura (Associate)</button>
+          <button class="pill-btn" onclick="quickFill('precious@strata.ng')">Precious (Line Mgr)</button>
+          <button class="pill-btn" onclick="quickFill('abdulmatin.gbadegesin@strata.ng')">Abdul-matin (Overall Mgr)</button>
+          <button class="pill-btn" onclick="quickFill('aisha.hussaini@strata.ng')">Aisha (Chief of Staff)</button>
+          <button class="pill-btn" onclick="quickFill('hilary.daudu@strata.ng')">Hilary (CEO)</button>
         </div>
       </div>
-
-      <div class="user-info-grid">
-        <div class="user-info-item"><span>Job Title</span><strong id="dispJobTitle">Product Manager</strong></div>
-        <div class="user-info-item"><span>Email</span><strong id="dispEmail">tobi@strata.ng</strong></div>
-        <div class="user-info-item"><span>Line Manager</span><strong id="dispLM">Precious</strong></div>
-        <div class="user-info-item"><span>Practice Area</span><strong id="dispPractice">Product</strong></div>
-      </div>
-
-      <div class="header-right">
-        <div class="pms-title">Performance Management System <span class="pms-tag" id="roleBadge">Employee</span></div>
-        <select class="quarter-select" id="quarterSelect" onchange="handleQuarterChange()">
-          <option value="Q2">Q2: Mid-year review</option>
-          <option value="Q4">Q4: Year-end review</option>
-          <option value="Q1">Q1: Indicative</option>
-          <option value="Q3">Q3: Indicative</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- NAVIGATION TABS -->
-    <div class="nav-tabs" id="navTabs">
-      <button class="tab-btn active" id="tabScorecard" onclick="switchTab('scorecard')">My scorecard</button>
-      <button class="tab-btn" id="tabDirectReports" style="display:none;" onclick="switchTab('directReports')">Direct reports <span class="badge-count">3</span></button>
-      <button class="tab-btn" id="tabDashboard" style="display:none;" onclick="switchTab('dashboard')">Dashboard <span class="badge-count" id="dashBadgeCount">10 to review</span></button>
-      <button class="tab-btn" id="tabPeople" style="display:none;" onclick="switchTab('people')">People Management</button>
-      <button class="tab-btn" id="tabGoals" style="display:none;" onclick="switchTab('companyGoals')">Company goals</button>
     </div>
   </div>
 
-  <!-- MAIN CONTAINER -->
-  <div class="container">
+  <!-- 2. MAIN PRODUCTION APPLICATION (HIDDEN UNTIL AUTHENTICATED) -->
+  <div id="appSection" style="display:none;">
     
-    <!-- EVALUATION VIEW (EMPLOYEE, LINE MANAGER, OM DETAIL) -->
-    <div id="viewEvaluation">
-      
-      <!-- SCORE JOURNEY TIMELINE BANNER -->
-      <div class="journey-banner" id="journeyBanner">
-        <div class="journey-step"><small>Self Score</small><strong>4.00</strong><span>Submitted 25 Sep</span></div>
-        <div class="journey-divider"></div>
-        <div class="journey-step"><small>Line Manager</small><strong>3.70</strong><span>Precious • 30 Sep</span></div>
-        <div class="journey-divider"></div>
-        <div class="journey-step"><small>Calibration</small><strong>3.70</strong><span>No change • 1 Oct</span></div>
-        <div class="journey-divider"></div>
-        <div class="journey-step"><small>Overall Manager</small><strong>3.70</strong><span>Approved • 2 Oct</span></div>
-        <div class="journey-divider"></div>
-        <div class="journey-step"><small>Chief of Staff</small><strong style="color:#d97706;">Pending</strong><span>In Review</span></div>
-      </div>
-
-      <!-- DIRECT REPORTS DROPDOWN BAR (LM / OM Views) -->
-      <div id="directReportsBar" class="card" style="display:none; background:#e0f2fe; border-color:#38bdf8;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+    <!-- HEADER BAR -->
+    <div class="header">
+      <div class="header-top">
+        <div class="logo-container">
+          <div class="logo-mark">Strata</div>
           <div>
-            <label style="font-size:12px; font-weight:700;">Select Direct Report: </label>
-            <select id="directReportSelect" onchange="loadDirectReportData()" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; font-size:12px;">
-              <option value="Tobi">Oluwatobi Omotayo (Product Manager)</option>
-              <option value="Amaka">Amaka Eze (Business Analyst)</option>
-              <option value="Chidi">Chidi Okafor (UX Designer)</option>
-            </select>
+            <div class="welcome-text" id="dispWelcomeName">Welcome</div>
+            <div class="date-text">3 October 2026</div>
           </div>
-          <div style="display:flex; gap:12px; font-size:12px;">
-            <span>🟡 <strong>1</strong> Awaiting your score</span>
-            <span>⚪ <strong>1</strong> Not submitted</span>
-            <span>🟢 <strong>1</strong> Scored</span>
-          </div>
+        </div>
+
+        <div class="user-info-grid">
+          <div class="user-info-item"><span>Role Designation</span><strong id="dispUserRole">--</strong></div>
+          <div class="user-info-item"><span>Email</span><strong id="dispUserEmail">--</strong></div>
+          <div class="user-info-item"><span>Line Manager</span><strong id="dispUserLM">--</strong></div>
+          <div class="user-info-item"><span>Overall Manager</span><strong id="dispUserOM">--</strong></div>
+        </div>
+
+        <div class="header-right">
+          <select class="form-control" style="width:auto; display:inline-block; padding:4px 8px; font-size:12px;">
+            <option>Q2: Mid-year review</option>
+            <option>Q4: Year-end review</option>
+          </select>
+          <br>
+          <button class="logout-btn" onclick="executeLogout()">Sign Out</button>
         </div>
       </div>
 
-      <div class="grid-layout">
-        <!-- LEFT SIDEBAR: GOAL ALIGNMENT -->
-        <div>
-          <div class="card">
-            <div class="section-title">
-              Goal alignment <small style="color:#64748b; font-size:11px;">FY26</small>
+      <!-- ROLE-BASED DYNAMIC NAVIGATION TABS -->
+      <div class="nav-tabs" id="navTabs">
+        <button class="tab-btn active" id="tabScorecard" onclick="switchTab('scorecard')">My scorecard</button>
+        <button class="tab-btn" id="tabDirectReports" style="display:none;" onclick="switchTab('directReports')">Direct reports</button>
+        <button class="tab-btn" id="tabDashboard" style="display:none;" onclick="switchTab('dashboard')">Executive Dashboard</button>
+        <button class="tab-btn" id="tabPeople" style="display:none;" onclick="switchTab('people')">People Management</button>
+        <button class="tab-btn" id="tabCompanyGoals" style="display:none;" onclick="switchTab('companyGoals')">Company Goals</button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+      
+      <!-- VIEW 1: MY SCORECARD & EVALUATION -->
+      <div id="viewEvaluation">
+        <div class="grid-layout">
+          <!-- GOAL ALIGNMENT SIDEBAR -->
+          <div>
+            <div class="card">
+              <div class="section-title">Goal Alignment <small style="color:#64748b;">FY26</small></div>
+              <div style="font-size:12px; margin-bottom:12px;">
+                <strong style="color:#2563eb;">🟦 Company Goal:</strong><br>
+                Grow Strata revenue 40% in FY26
+              </div>
+              <div style="font-size:12px; margin-bottom:12px;">
+                <strong style="color:#059669;">🟩 Practice Goal:</strong><br>
+                Product & AI: 95% on-time delivery across engagements
+              </div>
+              <div style="font-size:12px;">
+                <strong style="color:#d97706;">🔷 Team Goal:</strong><br>
+                Ship live AI use cases with proven value
+              </div>
             </div>
-
-            <div class="goal-group">
-              <div class="goal-group-title">🟦 Company Goals</div>
-              <div class="goal-item">1. Grow Strata revenue 40% in FY26</div>
-              <div class="goal-item">2. Scale NIBSS NPS Integration across 200+ Institutions</div>
-            </div>
-
-            <div class="goal-group">
-              <div class="goal-group-title">🟩 Practice Goals</div>
-              <div class="goal-item">1. Product & AI: 95% on-time delivery across client engagements</div>
-            </div>
-
-            <div class="goal-group">
-              <div class="goal-group-title">🔷 Team Goal</div>
-              <div class="goal-item">1. AI Transformation: every engagement ships live use cases with proven value</div>
-            </div>
-
-            <hr style="border:none; border-top:1px solid #e2e8f0; margin:15px 0;">
-
-            <div class="goal-group-title">MY KPI CATEGORIES</div>
-            <div class="category-row"><span>Core role delivery</span> <strong>50%</strong></div>
-            <div class="category-row"><span>Strategic / cross-functional</span> <strong>20%</strong></div>
-            <div class="category-row"><span>People, culture & values</span> <strong>15%</strong></div>
-            <div class="category-row"><span>Capability & development</span> <strong>15%</strong></div>
-            <div class="category-row" style="color:#16a34a; font-weight:bold; margin-top:6px;"><span>Total weight</span> <span>100% (valid)</span></div>
           </div>
-        </div>
 
-        <!-- RIGHT COLUMN: EVALUATION MATRIX -->
-        <div>
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-              <h2 style="font-size:18px;" id="evalMatrixTitle">Performance Evaluation</h2>
-              <div class="proof-of-work-box">
-                <label>Proof of work (Notion link):</label>
-                <input type="text" id="notionLinkInput" value="https://www.notion.so/strata/tobi-g1-proof-of-work" />
+          <!-- EVALUATION MATRIX -->
+          <div>
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3>Performance Evaluation Scorecard</h3>
+                <div style="font-size:12px;">
+                  <label>Proof of work (Notion): </label>
+                  <input type="text" id="notionUrl" style="padding:4px 8px; width:260px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;" value="https://notion.so/strata/proof-of-work">
+                </div>
               </div>
-            </div>
 
-            <!-- NESTED EVALUATION TABLE -->
-            <table class="eval-table">
-              <thead>
-                <tr>
-                  <th style="width:30px;">S/N</th>
-                  <th>KPI Category</th>
-                  <th style="width:60px;">Weight</th>
-                  <th>KPI Title</th>
-                  <th style="width:110px;">Weight in Cat.</th>
-                  <th style="width:65px;">Self Score</th>
-                  <th style="width:65px;">Manager Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="cat-header-td">1</td>
-                  <td class="cat-header-td">Core role delivery</td>
-                  <td class="cat-header-td">50%</td>
-                  <td>Milestone delivery</td>
-                  <td>40%</td>
-                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
-                </tr>
-                <tr>
-                  <td></td><td></td><td></td>
-                  <td style="color:#d97706; font-weight:600;">Scope change control (Edited)</td>
-                  <td>30%</td>
-                  <td><input type="number" class="score-input" value="5" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
-                </tr>
-                <tr>
-                  <td></td><td></td><td></td>
-                  <td>Outcome achievement</td>
-                  <td>30%</td>
-                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
-                </tr>
-                <tr>
-                  <td class="cat-header-td">2</td>
-                  <td class="cat-header-td">Strategic / cross-functional</td>
-                  <td class="cat-header-td">20%</td>
-                  <td>Client stakeholder satisfaction</td>
-                  <td>100%</td>
-                  <td><input type="number" class="score-input" value="4" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="4" min="1" max="5"></td>
-                </tr>
-                <tr>
-                  <td class="cat-header-td">3</td>
-                  <td class="cat-header-td">People, culture & values</td>
-                  <td class="cat-header-td">15%</td>
-                  <td>Collaboration & values</td>
-                  <td>100%</td>
-                  <td><input type="number" class="score-input" value="3" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="3" min="1" max="5"></td>
-                </tr>
-                <tr>
-                  <td class="cat-header-td">4</td>
-                  <td class="cat-header-td">Capability & development</td>
-                  <td class="cat-header-td">15%</td>
-                  <td>Capability development</td>
-                  <td>100%</td>
-                  <td><input type="number" class="score-input" value="3" min="1" max="5"></td>
-                  <td><input type="number" class="score-input mgr-input" value="3" min="1" max="5"></td>
-                </tr>
-              </tbody>
-            </table>
+              <table class="eval-table">
+                <thead>
+                  <tr>
+                    <th>S/N</th>
+                    <th>KPI Category</th>
+                    <th>Weight</th>
+                    <th>KPI Title</th>
+                    <th>Sub-Weight</th>
+                    <th>Self Score</th>
+                    <th>Manager Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="cat-header-td">1</td>
+                    <td class="cat-header-td">Core role delivery</td>
+                    <td class="cat-header-td">50%</td>
+                    <td>Milestone delivery</td>
+                    <td>40%</td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                  </tr>
+                  <tr>
+                    <td></td><td></td><td></td>
+                    <td>Scope integrity</td>
+                    <td>30%</td>
+                    <td><input type="number" class="score-input" value="5"></td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                  </tr>
+                  <tr>
+                    <td></td><td></td><td></td>
+                    <td>Outcome achievement</td>
+                    <td>30%</td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                  </tr>
+                  <tr>
+                    <td class="cat-header-td">2</td>
+                    <td class="cat-header-td">Strategic / cross-functional</td>
+                    <td class="cat-header-td">20%</td>
+                    <td>Client stakeholder satisfaction</td>
+                    <td>100%</td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                    <td><input type="number" class="score-input" value="4"></td>
+                  </tr>
+                </tbody>
+              </table>
 
-            <!-- SUMMARY BAR -->
-            <div class="summary-bar">
-              <div>Total weight <strong>100% (valid)</strong></div>
-              <div>Calculated score <strong id="calcScoreDisplay" style="font-size:18px;">3.70 / 5</strong></div>
-              <div class="score-badge">Exceeds Expectation</div>
-              <div style="display:flex; gap:8px;" id="actionButtonsGroup">
-                <button class="btn btn-secondary" id="btnEditKPIs" onclick="openEditModal()">Edit KPIs</button>
-                <button class="btn btn-secondary">Save draft</button>
-                <button class="btn btn-primary" onclick="alert('Scorecard submitted successfully!')">Submit Scorecard</button>
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:12px; border-radius:6px; font-size:13px;">
+                <div>Total Weight: <strong>100% (Valid)</strong></div>
+                <div>Calculated Score: <strong style="font-size:16px;">3.70 / 5.00</strong></div>
+                <button class="btn btn-primary" onclick="alert('Scorecard saved to database!')">Submit Scorecard</button>
               </div>
-            </div>
 
-            <!-- AUDIT TRAIL THREAD -->
-            <div style="margin-top:25px;">
-              <h4 style="font-size:14px; margin-bottom:10px;">Audit trail & comments</h4>
               <div class="audit-thread">
                 <div class="audit-item">
-                  <strong>Kurite Adesina</strong> <small>Overall Manager • 2 Oct</small><br>
-                  Approved the final score 3.70 (Exceeds Expectation).
+                  <strong>System Audit Trail</strong><br>
+                  Logged in as <span id="auditUserName">User</span>. Token authenticated via PostgreSQL backend.
                 </div>
-                <div class="audit-item">
-                  <strong>Iriti Coker</strong> <small>Calibration Committee • 1 Oct</small><br>
-                  Reviewed in calibration. No change to 3.70.
-                </div>
-                <div class="audit-item">
-                  <strong>Precious</strong> <small>Line Manager • 30 Sep</small><br>
-                  Edited manager score: Scope change control 5 ➔ 4. Reason: Delivery slipped one sprint.
-                </div>
-                <div class="audit-item">
-                  <strong>Oluwatobi Omotayo</strong> <small>Employee • 25 Sep</small><br>
-                  Submitted self score 4.00 with proof of work link.
-                </div>
-              </div>
-
-              <div style="margin-top:15px; display:flex; gap:10px;">
-                <input type="text" placeholder="Add a comment or audit reason..." style="flex:1; padding:8px 12px; border:1px solid var(--border-color); border-radius:4px; font-size:12px;">
-                <button class="btn btn-primary" onclick="alert('Comment added to audit trail.')">Post</button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- VIEW 2: EXECUTIVE MANAGEMENT DASHBOARD -->
-    <div id="viewDashboard" style="display:none;">
-      <div class="metrics-grid">
-        <div class="metric-card"><small>Approved by Overall Manager</small><div class="value">15</div></div>
-        <div class="metric-card"><small>Pending Review</small><div class="value" style="color:#d97706;">10</div></div>
-        <div class="metric-card"><small>Average Final Score</small><div class="value">3.67</div></div>
-        <div class="metric-card"><small>Rating Spread (15 Staff)</small><div style="font-size:12px; margin-top:8px;">🟢 Outstanding: 3 | 🔵 Exceeds: 8 | 🟡 Meets: 4</div></div>
+      <!-- VIEW 2: EXECUTIVE DASHBOARD (MANAGERS / HR / CEO) -->
+      <div id="viewDashboard" style="display:none;">
+        <div class="metrics-grid">
+          <div class="metric-card"><small>Approved Scorecards</small><div class="value">15</div></div>
+          <div class="metric-card"><small>Pending Reviews</small><div class="value" style="color:#d97706;">10</div></div>
+          <div class="metric-card"><small>Company Avg Score</small><div class="value">3.67</div></div>
+          <div class="metric-card"><small>Rating Spread</small><div style="font-size:12px; margin-top:6px;">Outstanding: 3 | Exceeds: 8 | Meets: 4</div></div>
+        </div>
+
+        <div class="card">
+          <h3>Company Scorecard Overview</h3>
+          <table class="eval-table" style="margin-top:15px;">
+            <thead>
+              <tr><th>Name</th><th>Role</th><th>Self</th><th>Manager</th><th>Rating</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Oluwatobi Omotayo</td><td>Senior Associate</td><td>4.00</td><td>3.70</td><td>Exceeds</td><td>In_Review</td></tr>
+              <tr><td>Wura</td><td>Associate</td><td>4.00</td><td>3.80</td><td>Exceeds</td><td>In_Review</td></tr>
+              <tr><td>Simi</td><td>Associate</td><td>3.50</td><td>3.50</td><td>Meets</td><td>Approved</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-          <h3 id="dashTitle">Company Scorecard Moderation Overview</h3>
-          <div style="display:flex; gap:10px;">
-            <select style="padding:6px; font-size:12px;"><option>All practices</option></select>
-            <select style="padding:6px; font-size:12px;"><option>All statuses</option></select>
-            <input type="text" placeholder="Search by name..." style="padding:6px; font-size:12px; border:1px solid var(--border-color); border-radius:4px;">
+      <!-- VIEW 3: PEOPLE MANAGEMENT (CHIEF OF STAFF / HR) -->
+      <div id="viewPeople" style="display:none;">
+        <div class="card">
+          <div class="section-title">People Management Directory <button class="btn btn-primary">+ Add Person</button></div>
+          <table class="eval-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Hilary Daudu</td><td>hilary.daudu@strata.ng</td><td>Managing Partner</td><td><button class="btn btn-secondary">Edit</button></td></tr>
+              <tr><td>Aisha Hussaini</td><td>aisha.hussaini@strata.ng</td><td>Manager</td><td><button class="btn btn-secondary">Edit</button></td></tr>
+              <tr><td>Precious</td><td>precious@strata.ng</td><td>Assistant Manager</td><td><button class="btn btn-secondary">Edit</button></td></tr>
+              <tr><td>Wura</td><td>wura@strata.ng</td><td>Associate</td><td><button class="btn btn-secondary">Edit</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 4: COMPANY GOALS (CEO) -->
+      <div id="viewCompanyGoals" style="display:none;">
+        <div class="card">
+          <div class="section-title">Company Strategic Goals (CEO Management)</div>
+          <div style="padding:10px; background:#f8fafc; border-radius:6px; margin-bottom:10px;">
+            <strong>1. Grow Strata revenue 40% in FY26</strong><br>
+            <small>Target: +40% annual growth across practices</small>
+          </div>
+          <div style="padding:10px; background:#f8fafc; border-radius:6px;">
+            <strong>2. Scale NIBSS NPS Integration across 200+ Institutions</strong><br>
+            <small>Target: 200 active financial connections</small>
           </div>
         </div>
-
-        <table class="eval-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Job Title</th>
-              <th>Practice Area</th>
-              <th>Self</th>
-              <th>Manager</th>
-              <th>Rating</th>
-              <th>Overall Mgr</th>
-              <th>Chief of Staff</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Oluwatobi Omotayo</strong></td>
-              <td>Product Manager</td>
-              <td>Product</td>
-              <td>4.00</td>
-              <td>3.70</td>
-              <td><span class="score-badge">Exceeds</span></td>
-              <td>Approved (2 Oct)</td>
-              <td>🟡 Pending</td>
-              <td><button class="btn btn-primary" style="padding:4px 8px;" onclick="switchTab('scorecard')">Review</button></td>
-            </tr>
-            <tr>
-              <td><strong>Amaka Eze</strong></td>
-              <td>Business Analyst</td>
-              <td>Analytics</td>
-              <td>3.80</td>
-              <td>3.40</td>
-              <td><span class="score-badge" style="background:#ca8a04;">Meets</span></td>
-              <td>Approved (1 Oct)</td>
-              <td>🟢 Approved</td>
-              <td><button class="btn btn-secondary" style="padding:4px 8px;">View</button></td>
-            </tr>
-            <tr>
-              <td><strong>Chidi Okafor</strong></td>
-              <td>UX Designer</td>
-              <td>Design</td>
-              <td>4.30</td>
-              <td>3.90</td>
-              <td><span class="score-badge">Exceeds</span></td>
-              <td>Approved (2 Oct)</td>
-              <td>🟢 Approved</td>
-              <td><button class="btn btn-secondary" style="padding:4px 8px;">View</button></td>
-            </tr>
-          </tbody>
-        </table>
       </div>
-    </div>
 
-    <!-- VIEW 3: PEOPLE MANAGEMENT DIRECTORY -->
-    <div id="viewPeople" style="display:none;">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-          <h3>People Management Directory</h3>
-          <button class="btn btn-primary">+ Add person</button>
-        </div>
-
-        <table class="eval-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Job Title</th>
-              <th>Practice Area</th>
-              <th>Role Designation</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Hilary Daudu</td><td>hilary.daudu@strata.ng</td><td>Managing Partner</td><td>Executive</td><td>Managing Partner</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
-            <tr><td>Aisha Hussaini</td><td>aisha.hussaini@strata.ng</td><td>Chief of Staff</td><td>Operations</td><td>Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
-            <tr><td>Abdul-matin Gbadegesin</td><td>abdulmatin.gbadegesin@strata.ng</td><td>Practice Director</td><td>Product</td><td>Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
-            <tr><td>Precious</td><td>precious@strata.ng</td><td>Assistant Manager</td><td>Product</td><td>Assistant Manager</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
-            <tr><td>Oluwatobi Omotayo</td><td>tobi@strata.ng</td><td>Product Manager</td><td>Product</td><td>Senior Associate</td><td><button class="btn btn-secondary" style="padding:4px 8px;">Edit</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- VIEW 4: COMPANY GOALS MANAGEMENT (CEO View) -->
-    <div id="viewGoals" style="display:none;">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-          <h3>Company Strategic Goals — FY26</h3>
-          <button class="btn btn-success">+ Add company goal</button>
-        </div>
-        <div class="goal-item" style="padding:15px; margin-bottom:10px;">
-          <strong>1. Grow Strata revenue 40% in FY26</strong><br>
-          <small>Measure: Annual revenue target | Target: +40%</small>
-        </div>
-        <div class="goal-item" style="padding:15px;">
-          <strong>2. Scale NIBSS NPS Integration across 200+ Institutions</strong><br>
-          <small>Measure: Active MFB connections | Target: 200</small>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- KPI EDIT MODAL OVERLAY -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal-content">
-      <h3 style="margin-bottom:15px;">Editing KPIs for Oluwatobi Omotayo</h3>
-      <p style="font-size:12px; color:#64748b; margin-bottom:15px;">If you change a KPI weight or category, scores will reset. A reason for change is mandatory.</p>
-      
-      <table class="eval-table">
-        <thead>
-          <tr>
-            <th>KPI Category</th>
-            <th>Weight</th>
-            <th>KPI Title</th>
-            <th>Sub-Weight</th>
-            <th>Reason for Change (Required)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Core role delivery</td>
-            <td>50%</td>
-            <td><input type="text" value="Milestone delivery" style="width:100%; padding:4px;"></td>
-            <td>40%</td>
-            <td><input type="text" placeholder="Reason for change..." style="width:100%; padding:4px;"></td>
-          </tr>
-          <tr>
-            <td>Core role delivery</td>
-            <td>50%</td>
-            <td><input type="text" value="Scope change control" style="width:100%; padding:4px;"></td>
-            <td>30%</td>
-            <td><input type="text" value="Matches the Q2 delivery plan" style="width:100%; padding:4px;"></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div style="display:flex; justify-content:space-between; margin-top:20px;">
-        <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="closeEditModal(); alert('Updated KPIs sent to Oluwatobi!')">Send to Oluwatobi</button>
-      </div>
     </div>
   </div>
 
   <script>
-    // DYNAMIC PERSONA & VIEW SWITCHER ENGINE
-    function switchViewMode() {
-      const role = document.getElementById('roleSelector').value;
-      const tabDR = document.getElementById('tabDirectReports');
-      const tabDash = document.getElementById('tabDashboard');
-      const tabPeople = document.getElementById('tabPeople');
-      const tabGoals = document.getElementById('tabGoals');
-      const drBar = document.getElementById('directReportsBar');
-      const roleBadge = document.getElementById('roleBadge');
+    // AUTOMATIC SESSION CHECK ON LOAD
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('strata_jwt_token');
+      const userRaw = localStorage.getItem('strata_user');
+      if (token && userRaw) {
+        renderAuthenticatedApp(JSON.parse(userRaw));
+      }
+    });
 
-      roleBadge.innerText = role;
+    // QUICK-FILL FOR EXECUTIVE DEMO
+    function quickFill(email) {
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = 'Password123!';
+    }
 
-      if (role === 'Employee') {
-        document.getElementById('welcomeName').innerText = "Welcome, Oluwatobi";
-        document.getElementById('dispJobTitle').innerText = "Product Manager";
-        document.getElementById('dispEmail').innerText = "tobi@strata.ng";
-        document.getElementById('dispLM').innerText = "Precious";
-        tabDR.style.display = 'none'; tabDash.style.display = 'none'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
-        drBar.style.display = 'none';
-        switchTab('scorecard');
-      } else if (role === 'LineManager') {
-        document.getElementById('welcomeName').innerText = "Welcome, Precious";
-        document.getElementById('dispJobTitle').innerText = "Assistant Manager";
-        document.getElementById('dispEmail').innerText = "precious@strata.ng";
-        document.getElementById('dispLM').innerText = "Abdul-matin";
-        tabDR.style.display = 'flex'; tabDash.style.display = 'none'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
-        switchTab('directReports');
-      } else if (role === 'OverallManager') {
-        document.getElementById('welcomeName').innerText = "Welcome, Abdul-matin";
-        document.getElementById('dispJobTitle').innerText = "Practice Director";
-        document.getElementById('dispEmail').innerText = "abdulmatin.gbadegesin@strata.ng";
-        document.getElementById('dispLM').innerText = "Hilary Daudu";
-        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
-        document.getElementById('dashBadgeCount').innerText = "10 to review";
-        switchTab('dashboard');
-      } else if (role === 'Calibration') {
-        document.getElementById('welcomeName').innerText = "Welcome, Olusola";
-        document.getElementById('dispJobTitle').innerText = "Calibration Chair";
-        document.getElementById('dispEmail').innerText = "olusola.oyekola@strata.ng";
-        document.getElementById('dispLM').innerText = "Hilary Daudu";
-        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'none'; tabGoals.style.display = 'none';
-        document.getElementById('dashBadgeCount').innerText = "15 to calibrate";
-        switchTab('dashboard');
-      } else if (role === 'ChiefOfStaff') {
-        document.getElementById('welcomeName').innerText = "Welcome, Aisha";
-        document.getElementById('dispJobTitle').innerText = "Chief of Staff";
-        document.getElementById('dispEmail').innerText = "aisha.hussaini@strata.ng";
-        document.getElementById('dispLM').innerText = "Hilary Daudu";
-        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'flex'; tabGoals.style.display = 'none';
-        switchTab('dashboard');
-      } else if (role === 'CEO') {
-        document.getElementById('welcomeName').innerText = "Welcome, Hilary Daudu";
-        document.getElementById('dispJobTitle').innerText = "Managing Partner / CEO";
-        document.getElementById('dispEmail').innerText = "hilary.daudu@strata.ng";
-        document.getElementById('dispLM').innerText = "Self";
-        tabDR.style.display = 'none'; tabDash.style.display = 'flex'; tabPeople.style.display = 'flex'; tabGoals.style.display = 'flex';
-        switchTab('companyGoals');
+    // LOGIN EXECUTION
+    async function executeLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const errBox = document.getElementById('loginError');
+      errBox.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        // Save JWT token and User session
+        localStorage.setItem('strata_jwt_token', data.token);
+        localStorage.setItem('strata_user', JSON.stringify(data.user));
+
+        renderAuthenticatedApp(data.user);
+      } catch (err) {
+        errBox.innerText = err.message;
+        errBox.style.display = 'block';
       }
     }
 
+    // RENDER AUTHENTICATED SYSTEM BASED ON DATABASE ROLE
+    function renderAuthenticatedApp(user) {
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('appSection').style.display = 'block';
+
+      document.getElementById('dispWelcomeName').innerText = `Welcome, ${user.name}`;
+      document.getElementById('dispUserRole').innerText = user.role;
+      document.getElementById('dispUserEmail').innerText = user.email || 'user@strata.ng';
+      document.getElementById('auditUserName').innerText = `${user.name} (${user.role})`;
+
+      // DYNAMIC ROLE-BASED ACCESS CONTROL (RBAC) TAB ENFORCEMENT
+      const role = user.role;
+      const tabDR = document.getElementById('tabDirectReports');
+      const tabDash = document.getElementById('tabDashboard');
+      const tabPeople = document.getElementById('tabPeople');
+      const tabGoals = document.getElementById('tabCompanyGoals');
+
+      // Reset tab visibility
+      tabDR.style.display = 'none';
+      tabDash.style.display = 'none';
+      tabPeople.style.display = 'none';
+      tabGoals.style.display = 'none';
+
+      // 1. Line Managers & Assistant Managers
+      if (['Assistant Manager', 'Manager', 'Partner', 'Managing Partner'].includes(role)) {
+        tabDR.style.display = 'flex';
+      }
+
+      // 2. Executive Management & Calibration Committee
+      if (['Manager', 'Partner', 'Managing Partner'].includes(role)) {
+        tabDash.style.display = 'flex';
+      }
+
+      // 3. Chief of Staff / HR
+      if (role === 'Manager' || user.email.includes('aisha')) {
+        tabPeople.style.display = 'flex';
+      }
+
+      // 4. CEO / Managing Partner
+      if (role === 'Managing Partner') {
+        tabGoals.style.display = 'flex';
+      }
+
+      switchTab('scorecard');
+    }
+
+    // TAB SWITCHER
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('viewEvaluation').style.display = 'none';
       document.getElementById('viewDashboard').style.display = 'none';
       document.getElementById('viewPeople').style.display = 'none';
-      document.getElementById('viewGoals').style.display = 'none';
-      document.getElementById('directReportsBar').style.display = 'none';
+      document.getElementById('viewCompanyGoals').style.display = 'none';
 
-      if (tabName === 'scorecard') {
-        document.getElementById('tabScorecard').classList.add('active');
+      if (tabName === 'scorecard' || tabName === 'directReports') {
+        document.getElementById(tabName === 'scorecard' ? 'tabScorecard' : 'tabDirectReports').classList.add('active');
         document.getElementById('viewEvaluation').style.display = 'block';
-      } else if (tabName === 'directReports') {
-        document.getElementById('tabDirectReports').classList.add('active');
-        document.getElementById('viewEvaluation').style.display = 'block';
-        document.getElementById('directReportsBar').style.display = 'block';
       } else if (tabName === 'dashboard') {
         document.getElementById('tabDashboard').classList.add('active');
         document.getElementById('viewDashboard').style.display = 'block';
@@ -613,13 +441,18 @@
         document.getElementById('tabPeople').classList.add('active');
         document.getElementById('viewPeople').style.display = 'block';
       } else if (tabName === 'companyGoals') {
-        document.getElementById('tabGoals').classList.add('active');
-        document.getElementById('viewGoals').style.display = 'block';
+        document.getElementById('tabCompanyGoals').classList.add('active');
+        document.getElementById('viewCompanyGoals').style.display = 'block';
       }
     }
 
-    function openEditModal() { document.getElementById('editModal').style.display = 'flex'; }
-    function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+    // LOGOUT EXECUTION
+    function executeLogout() {
+      localStorage.removeItem('strata_jwt_token');
+      localStorage.removeItem('strata_user');
+      document.getElementById('appSection').style.display = 'none';
+      document.getElementById('authSection').style.display = 'flex';
+    }
   </script>
 </body>
 </html>
